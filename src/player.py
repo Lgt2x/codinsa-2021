@@ -1,6 +1,6 @@
 class Player:
-    def __init__(self, map):
-        self.map = map
+    def __init__(self, game_map):
+        self.game_map = game_map
     
     def play(self):
 
@@ -14,9 +14,6 @@ class Player:
 
 
         return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":summon}
-
-    def update(self, data):
-        pass
 
     def ingenieurs(self,move,attack,mine,build):
         pass
@@ -45,3 +42,5 @@ class Player:
                                 summon['['+x+','+y+','+('true','false')[d]+']'] = "L"
                                 break
     
+    def update(self, data):
+        self.game_map.update(data)

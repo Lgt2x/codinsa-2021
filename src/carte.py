@@ -1,4 +1,6 @@
 from enum import Enum
+import src.batiment as batiment
+import src.unite as unite
 class Terrain(Enum):
     F = 0
     M = 1
@@ -7,20 +9,55 @@ class Terrain(Enum):
 
 import json
 from queue import PriorityQueue
+def position_UD_to_serial(position):
+    return (position[0]*2+int(position[2]), position[1])
+
+def position_serial_to_UD(position):
+    return (position[0]//2, position[1], position[0]%2)
 class Carte:
 
+    def decode_raw_terrain(self, raw_terrain, spawn):
+        for i in range(len(raw_terrain)):
+            for j in range(len(raw_terrain[0])):
+                split_tile = raw_terrain[i][j].split(";")
+                self.terrain[i][j] = split_tile[0]
+                if split_tile[0] == "A":
+                    self.discovered[i][j] = True # une abysse est techniquement découverte
+                if len(split_tile) != 1: # terrain
+                    if split_tile[1] in "SCTW":
+                        class_instantiate = {
+                            "S" : batiment.Ecole,
+                            "C" : batiment.Amphi,
+                            "T" : batiment.Tourelle,
+                            "W" : batiment.Mur
+                        }[split_tile[1]]
+                        is_ours = True
+                        if split_tile[1] == "S":
+                            # TODO appel orga
+                            if not(j == spawn[0] and i == spawn[1]):
+                                is_ours= False
+                        self.batiments[i][j] = class_instantiate(appartenance = is_ours, position = [i,j])
+                    elif split_tile[1] in "VLH":
+                        class_instantiate = {
+                            "V" : unite.Ingenieur,
+                            "L" : unite.ULegere,
+                            "H" : unite.ULourde,
+                        }[split_tile[1]]
+                        self.unites[i][j] = class_instantiate(appartenance= 0, position = [i,j])
+
     def __init__(self,data):
-        #TODO : Adapter selon format du json*
+        raw_terrain = [b.split(" ") for b in data['map'].split("\n")][:-1]
+        self.spawn = position_UD_to_serial(data['spawn'])
+        self.x = len(raw_terrain[0])
+        self.y = len(raw_terrain)
+        
+        self.terrain = [["" for _ in range(self.x)] for _ in range(self.y)]
+        self.batiments = [[None for _ in range(self.x)] for _ in range(self.y)]
+        self.unites = [[None for _ in range(self.x)] for _ in range(self.y)]
+        self.discovered = [[False for _ in range(self.x)] for _ in range(self.y)]
 
-        self.terrain = [b.split(" ") for b in data['map'].split("\n")]
-        spawn = data['spawn']
-
-        print(spawn)
-        self.x = len(self.terrain[0])
-        self.y = len(self.terrain)
-            
-        self.batiments = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
-        self.unites = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
+        self.decode_raw_terrain(raw_terrain=raw_terrain, spawn=self.spawn)
+    
 
     def adjacent(self,x,y):
         adj1=None
@@ -49,6 +86,12 @@ class Carte:
     def convToDown(self,x,y):
         return x//2,y,x%2
     
+    def update(self, data):
+        print(data)
+        for (position, info) in data["visible"].items():
+            position = self.position_UD_to_serial(position)
+            # TODO actually update
+
     def updateTerrain(self,x,y,down,val):
         self.terrain[x][y][down] = val
 

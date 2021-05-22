@@ -1,4 +1,6 @@
 from enum import Enum
+import src.batiment as batiment
+import src.unite as unite
 class Terrain(Enum):
     F = 0
     M = 1
@@ -9,19 +11,51 @@ import json
 from queue import PriorityQueue
 class Carte:
 
+    def decode_raw_terrain(self, raw_terrain, spawn):
+        for i in range(len(raw_terrain)):
+            for j in range(len(raw_terrain[0])):
+                split_tile = raw_terrain[i][j].split(";")
+                self.terrain[i][j] = split_tile[0]
+                if len(split_tile) != 1: # terrain
+                    if split_tile[1] in "SCTW":
+                        class_instantiate = {
+                            "S" : batiment.Ecole,
+                            "C" : batiment.Amphi,
+                            "T" : batiment.Tourelle,
+                            "W" : batiment.Mur
+                        }[split_tile[1]]
+                        is_ours = True
+                        print(spawn)
+                        print(i,j)
+                        if split_tile[1] == "S":
+                            # TODO appel orga
+                            if not(i == spawn[0] and j == spawn[1]):
+                                is_ours= False
+                        self.batiments[i][j] = class_instantiate(appartenance = is_ours, position = [i,j])
+                    elif split_tile[1] in "VLH":
+                        class_instantiate = {
+                            "V" : unite.Ingenieur,
+                            "L" : unite.ULegere,
+                            "H" : unite.ULourde,
+                        }[split_tile[1]]
+                        self.unites[i][j] = class_instantiate(appartenance= 0, position = [i,j])
+
     def __init__(self,data):
-        #TODO : Adapter selon format du json*
+        raw_terrain = [b.split(" ") for b in data['map'].split("\n")][:-1]
+        print("\n".join([str(x) for x in raw_terrain]))
+        self.spawn = data['spawn']
+        self.x = len(raw_terrain[0])
+        self.y = len(raw_terrain)
+        
+        self.terrain = [["" for _ in range(self.x)] for _ in range(self.y)]
+        self.batiments = [[None for _ in range(self.x)] for _ in range(self.y)]
+        self.unites = [[None for _ in range(self.x)] for _ in range(self.y)]
+        self.decode_raw_terrain(raw_terrain=raw_terrain, spawn=self.spawn)
 
-        self.terrain = [b.split(" ") for b in data['map'].split("\n")]
-        spawn = data['spawn']
-        self.x = len(self.terrain[0])
-        self.y = len(self.terrain)
-
-        print(spawn.split(" "))
-            
-        self.batiments = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
-        self.unites = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
-
+        for i in self.batiments:
+            for j in i:
+                if j!=None:
+                    print(j.appartenance)
     def adjacent(self,x,y):
         adj1=None
         adj2=None

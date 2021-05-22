@@ -7,18 +7,18 @@ class TileState():
         self.is_unit = (units_shard != None)
         self.is_batiment = (batiment_shard != None)
         self.ours = False
+        self.identifiant = map_shard
         self.type = map_shard
         if self.is_batiment:
             self.ours = batiment_shard.appartenance
-            self.type = batiment_shard.type
+            self.type = batiment_shard.identifiant
         elif self.is_unit:
             self.ours = units_shard.appartenance
-            self.type = units_shard.type
+            self.type = units_shard.identifiant
         
     def to_dict(self):
         return {
-            "is_unit" : self.is_unit,
-            "is_batiment" : self.is_batiment,
+            "terrain" : self.identifiant,
             "type" : self.type,
             "ours" : self.ours
         }
@@ -27,7 +27,7 @@ class GameLogger():
     def __init__(self, target_file_location):
         self.all_states = []
         self.target_file_location = target_file_location
-    def log_gamestate(carte : Carte): 
+    def log_gamestate(self, carte : Carte): 
         len_x = len(carte.terrain)
         len_y = len(carte.terrain[0])
         map_representation = [[{} for _ in range(len_y)] for _ in range(len_x)]       
@@ -37,5 +37,5 @@ class GameLogger():
         self.all_states.append({"map_representation" : map_representation})
     
     def save_logs(self):
-        with open(target_file_location, 'w') as outfile : 
+        with open(self.target_file_location, 'w') as outfile : 
             json.dump(self.all_states, outfile)

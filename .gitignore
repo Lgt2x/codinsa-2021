@@ -3,3 +3,7 @@ game_viz/*
 !game_viz/direxist.txt
 game_logs/*
 !game_logs/direxist.txt
+.idea/*
+venv/*
+src/__pycache__/*
+token

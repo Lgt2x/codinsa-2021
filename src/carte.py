@@ -14,10 +14,10 @@ class Carte:
 
         self.terrain = [b.split(" ") for b in data['map'].split("\n")]
         spawn = data['spawn']
+
+        print(spawn)
         self.x = len(self.terrain[0])
         self.y = len(self.terrain)
-
-        print(spawn.split(" "))
             
         self.batiments = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
         self.unites = [[None]* len(self.terrain) for i in range(len(self.terrain[0]))]
@@ -29,32 +29,19 @@ class Carte:
         if x%2: #down
             if x+1<self.x:
                 adj1 = [x+1,y]
-            else:
-                adj1 = None
             if x-1>=0:
                 if y-1>=0: 
                     adj2 = [x-1,y-1]
-                else:
-                    adj2 = None
                 adj3 = [x-1,y]
-            else:
-                adj2 = None
-                adj3 = None
         else: #up
             if x-1>=0:
                 adj1 = [x-1,y]
-            else:
-                ajd1 = None
             if x+1<self.x:
                 adj3 = [x+1,y]    
                 if y+1<self.y:
                     adj2 = [x+1,y+1]
-                else:
-                    ajd2 = None
-            else:
-                adj3 = None    
                 
-        #return [adj1,adj2,adj3]
+        return [adj1,adj2,adj3]
 
     def distance(self,x1,y1,x2,y2):
         return abs(x2//2 - x1//2)+abs(y2 - y1)+abs(x2//2-x1//2+y1-y2+x2%2-x1%2)

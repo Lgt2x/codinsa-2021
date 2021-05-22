@@ -3,19 +3,15 @@ from src.player import Player
 from src.carte import Carte
 
 connexion = Connection()
-connexion.login("Lyon1","g[B>!&I7C#V;-Y,OW%+/9A5")
-connexion.deleteGames()
-connexion.newGame('InactiveAI')
+
+password = ["g[B>!&I7C#V;-Y,OW%+/9A5", "ET1j]ZWe(JY)^A4_#@_1.h_J", "0%%IFIJ^&_Ac#_>R,a_YA+'"]
+
+connexion.login("Lyon3", password[2])
+connexion.newGame('RessourceAI')
 connexion.connect()
 turn1 = connexion.getMap()
 
 map = Carte(turn1)
-
-print(map.distance(0,0,1,1))
-print(map.distance(0,0,5,0))
-print(map.distance(0,0,3,3))
-
-print(map.adjacent(0,0))
 
 player = Player(map)
 
@@ -36,9 +32,9 @@ for turn_number in range(1001):
     if "your_turn" not in data:
         print("Fin de la partie")
         if data["AIsWinner"] == True:
-            print("On a perdu")
+            print("A a gagné")
         else:
-            print("On a gagné")
+            print("A a perdu")
         break
 
     if data["your_turn"]==False:
@@ -48,3 +44,4 @@ for turn_number in range(1001):
     played = player.play()
     connexion.sendTurn(played)
 
+connexion.deleteGames(connexion.game_id)

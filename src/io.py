@@ -1,11 +1,13 @@
-import requests
 import json
 import socket
+
+import requests
+
 
 class Connection:
     def __init__(self, token=""):
         self.game_started = False
-        self.token=token
+        self.token = token
 
     def login(self, username: str, password: str):
         resp = requests.post(
@@ -32,22 +34,23 @@ class Connection:
         print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
 
     def current(self):
-        resp=requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie':f'session={self.token}'})
+        resp = requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie': f'session={self.token}'})
         return json.loads(resp.text)['games']
 
     def deleteGames(self, game=""):
         # Supprime une partie si l'argument est précisé, vire tout sinon
 
         if game:
-            requests.delete(f'http://codinsa.insa-rennes.fr/game/{game}', headers={'Cookie':f'session={self.token}'})
+            requests.delete(f'http://codinsa.insa-rennes.fr/game/{game}', headers={'Cookie': f'session={self.token}'})
+            print(f"Deleted game {game}")
         else:
-            resp=requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie':f'session={self.token}'})
-            games=json.loads(resp.text)['games']
+            resp = requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie': f'session={self.token}'})
+            games = json.loads(resp.text)['games']
 
             print(f"Liste des parties en cours qui vont être supprimées: {games}")
 
             for g in games:
-                requests.delete(f'http://codinsa.insa-rennes.fr/game/{g}', headers={'Cookie':f'session={self.token}'})
+                requests.delete(f'http://codinsa.insa-rennes.fr/game/{g}', headers={'Cookie': f'session={self.token}'})
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,18 +58,18 @@ class Connection:
 
     def getMap(self):
         data = self.socket.recv(2048)
-        data=data.decode()
+        data = data.decode()
         print(data)
 
         if data[-2] != "}":
             data2 = self.socket.recv(2048)
             data2 = data2.decode()
             print(data2)
-        
-            return json.loads(data+data2)
-        
+
+            return json.loads(data + data2)
+
         return json.loads(data)
-    
+
     def sendTurn(self, data):
         data['token'] = self.password
         print(str(data).replace("'", '"'))
@@ -79,8 +82,9 @@ class Connection:
         print("Tour reçu")
         print(data)
         parsed = json.loads(data)
+
+
         if "errors" in parsed:
             print(parsed["errors"])
 
         return parsed
-    

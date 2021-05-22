@@ -14,6 +14,8 @@ class Carte:
 
         self.terrain = [b.split(" ") for b in data['map'].split("\n")]
         spawn = data['spawn']
+
+        print(spawn)
         self.x = len(self.terrain[0])
         self.y = len(self.terrain)
             

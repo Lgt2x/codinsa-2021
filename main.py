@@ -7,7 +7,7 @@ connexion = Connection()
 
 password = ["g[B>!&I7C#V;-Y,OW%+/9A5", "ET1j]ZWe(JY)^A4_#@_1.h_J", "0%%IFIJ^&_Ac#_>R,a_YA+'"]
 
-connexion.login("Lyon2", password[1])
+connexion.login("Lyon3", password[2])
 connexion.deleteGames()
 
 connexion.newGame('RessourceAI')

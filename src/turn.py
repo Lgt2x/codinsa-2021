@@ -15,13 +15,14 @@ class Turn():
     def conv(self, pos):
         return position_serial_to_UD(pos)
     def cdump(self,pos):
-        return json.dumps(conv(pos))
+        return json.dumps(self.conv(pos))
     def f_pos(self,pos):
         return str(list(pos))
     def l_conv(self, pos):
         return list(self.conv(pos))
     def f_conv(self,pos):
         return str(list(self.conv(pos)))
+
     def mine(self,pos_inge, pos_ressource):
         self.d_mine[self.conv(pos_inge)] = [self.l_conv[pos_ressource]] # check double array
 

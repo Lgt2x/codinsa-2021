@@ -2,6 +2,8 @@ import src.util
 
 import json
 
+import src.turn
+
 
 class Player:
     def __init__(self, game_map):
@@ -18,7 +20,7 @@ class Player:
         self.summon = {}
 
         # On joue avec les ingés
-        self.ingenieurs()
+        self.ingenieurs(turn)
 
         # On joue avec les PPA
 
@@ -33,12 +35,12 @@ class Player:
             final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
             turn.summon(location, unit)
 
-        for unite in self.game_map.listeUnites:
-            if unite.appartenance:
-                voisins_unite = self.game_map.adjacent(*unite.position)
-                for voisin_unite in voisins_unite:
-                    if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
-                        turn.build(unite.position, voisin_unite, "C")
+        # for unite in self.game_map.listeUnites:
+        #     if unite.appartenance:
+        #         voisins_unite = self.game_map.adjacent(*unite.position)
+        #         for voisin_unite in voisins_unite:
+        #             if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
+        #                 turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
         return {
             "move": self.move,
@@ -48,7 +50,7 @@ class Player:
             "summon": final_summon,
         }
 
-    def ingenieurs(self):
+    def ingenieurs(self,turn):
         """
         détermine le comportement et les sorties des ingénieurs
         """
@@ -86,9 +88,9 @@ class Player:
                         (unite.target[0], unite.target[1])
                         , unite.pointMouvement
                     )
-                    """
-                    turn.move(unite.position, moves)
-                    """
+
+                    turn.deplacer_unite(unite.position, moves)
+
 
                 # TODO PLUS TARD
                 # Si il se déplace pour construire un amphi
@@ -100,6 +102,7 @@ class Player:
 
                 # Si il n'a pas de role
                 if unite.role == 0:
+                    print("Position: ",unite.position)
 
                     # TODO PLUS TARD
                     # si gold > 250 + x
@@ -110,6 +113,7 @@ class Player:
                     posLibreRessource = src.util.closestAvailableRessource(
                         unite, self.game_map
                     )
+                    print("PositionRessource: ", posLibreRessource)
                     unite.target = posLibreRessource
                     # on save que cette position est prise
                     self.game_map.target[posLibreRessource[0]][
@@ -122,7 +126,7 @@ class Player:
                         unite.target,
                         unite.pointMouvement,
                     )
-                    """turn.move(unite,deplacementUnite)"""
+                    turn.deplacer_unite(unite.position,deplacementUnite)
                     # on passe au role "se deplacer vers ress"
                     unite.role = 1
 

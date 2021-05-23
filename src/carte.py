@@ -165,10 +165,11 @@ class Carte:
         for moved in data["moved"]:
 
             #Le déplacement a eu lieu
-            if(moved[1]):
+            if(moved[-1]):
                 #Recherche de l'unité au départ du mouvement
-                posDepart = position_UD_to_serial(moved[0][0])
-                posArrivee = position_UD_to_serial(moved[0][-1])
+                print("moved: ",moved[0])
+                posDepart = position_UD_to_serial(moved[0])
+                posArrivee = position_UD_to_serial(moved[-2])
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
                 #Update la position stockée par l'objet :
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee

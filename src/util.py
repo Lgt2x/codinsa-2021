@@ -118,13 +118,14 @@ def ennemyFinder(depart, carte):
             continue
         # print("UNITE======= ",carte.unites[current[1][0]][current[1][1]])
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==0:
-
             return current[1]
         if carte.unites[current[1][0]][current[1][1]] is not None and carte.unites[current[1][0]][current[1][1]].appartenance==0:
             # print("AAAAAAAAAAAAAA")
             return current[1]
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==2:
 
+            return current[1]
+        if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==2:
             return current[1]
 
         visited[current[1][0]][current[1][1]] = True

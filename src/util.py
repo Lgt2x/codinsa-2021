@@ -112,7 +112,7 @@ def ennemyFinder(depart, carte):
 
         current = pQ.get()
 
-        print("Current= ", current)
+        #print("Current= ", current)
 
         if visited[current[1][0]][current[1][1]]:
             continue

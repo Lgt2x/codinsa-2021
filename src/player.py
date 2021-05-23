@@ -4,8 +4,11 @@ import json
 
 import src.turn
 
+seuilPPA = 80
+seuilTank = 1000
 
 class Player:
+
     def __init__(self, game_map):
         self.game_map = game_map
 
@@ -210,12 +213,18 @@ class Player:
                             nbInge+=1
 
         #Spawn PPA
+
+        money = self.game_map.balance
         for b in self.game_map.listeBatiments:
             if b.identifiant == 'C' and b.appartenance == 1:
                 voisins = self.game_map.adjacent(*b.position)
                 for v in voisins:
-                    turn.summon(v,"L")
-                        
+                    if(money > seuilPPA and money <= seuilTank):
+                        turn.summon(v,"L")
+                        money-=30
+                    elif(money > seuilTank):
+                        money-=100
+                
                         
                     
 

@@ -30,6 +30,9 @@ for index, state in tqdm(enumerate(data), total = len(data)):
 
     font_lgd = ImageFont.truetype("src/gameviz/fonts/arial.ttf", size=30)
     draw.text((size_img, size_img//10), text=f"Balance : {state['balance']}", font = font_lgd, fill="black")
+    draw.text((size_img, 2*(size_img//10)), text=f"Mes points : {state['points'][0]}", font = font_lgd, fill="black")
+    draw.text((size_img, 3*(size_img//10)), text=f"Points adv : {state['points'][1]}", font = font_lgd, fill="black")
+
     im.save(f'game_viz/{target_dir}/{index:04d}.png')
 
 

@@ -89,6 +89,7 @@ class Carte:
 
         self.decode_raw_terrain(raw_terrain=raw_terrain, spawn=self.spawn)
         self.balance = 0
+        self.points = 0
 
     def adjacent(self, x, y):
         adj1 = None
@@ -153,6 +154,7 @@ class Carte:
 
     def update(self, data):
         self.balance = data["balance"]
+        self.points = data["points"]
         #Création d'une nouvelle liste avec que les unités à nous
         newListeUnites = []
 

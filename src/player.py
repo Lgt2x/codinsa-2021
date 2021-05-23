@@ -28,13 +28,7 @@ class Player:
         self.compute_all_summonings()
 
         # Conversions des summons dans le format de sortie
-
-        final_summon = {}
-        for location, unit in self.summon.items():
-            key = str(list(self.game_map.convToDown(*location))).lower()
-            final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
-            turn.summon(location, unit)
-
+        
         # for unite in self.game_map.listeUnites:
         #     if unite.appartenance:
         #         voisins_unite = self.game_map.adjacent(*unite.position)
@@ -219,7 +213,6 @@ class Player:
                                 or self.game_map.terrain[v[0]][v[1]] == 1
                             ):  # Case vide
                                 self.summon[tuple(v)] = "L"
-
                                 break
                 if (
                     self.game_map.batiments[i][j].identifiant == "S"
@@ -251,9 +244,9 @@ class Player:
         positions_futur_taken = []
 
         batiments_perimeter = [x for x in self.game_map.listeBatiments if x.appartenance==1 and dToSpawn(x.position) <= PERIMETER_DANGER]
+        camps = [x for x in batiments_perimeter if x.identifiant == "C"]
+        tours = [x for x in batiments_perimeter if x.identifiant == "T"]
         if(len(opponents_perimeter)) == 0: # no enemy nearby
-            camps = [x for x in batiments_perimeter if x.identifiant == "C"]
-            tours = [x for x in batiments_perimeter if x.identifiant == "T"]
             if len(camps) < optimum_amphi:
                 for unite in unites_perimeter:
                     if unite.identifiant == "V":
@@ -262,10 +255,7 @@ class Player:
                             self.game_map.target[unite.target[0]][unite.target[1]] = False
                             unite.target = None
                 self.ingenieurs()
-            else:
-                
-                # build tower
-                pass
+
         else:
             # si rapport de force déséquilibré, former des unités
             MAX_FORMATION = 4
@@ -288,7 +278,9 @@ class Player:
                     # tout en restant aussi proche que possible du spawn
                     all_pos_formations = sorted(all_pos_formations, key = lambda x: dToSpawn(x))
 
-                    turn.spawn(all_pos_formations[0], "L")
+                    turn.summon(all_pos_formations[0], "L")
+                    self.game_map.balance -= unit.cout
+
                     positions_futur_taken.append(all_pos_formations[0])
                     cpt_forme +=1
                     all_pos_formations = all_pos_formations[1:]

@@ -23,6 +23,7 @@ class Ingenieur(Unite):
         super().__init__(*args,**kwargs)
 
 class ULegere(Unite):
+    target = None
     identifiant='L'
     cout=30
     pv=60
@@ -33,7 +34,7 @@ class ULegere(Unite):
         super().__init__(*args, **kwargs)
 
 class ULourde(Unite):
-
+    target = None
     identifiant='H'
     cout=100
     pv=100

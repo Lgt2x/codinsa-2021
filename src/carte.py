@@ -56,6 +56,8 @@ class Carte:
                             # TODO appel orga
                             if i == spawn[0] and j == spawn[1]:
                                 is_ours = True
+                            else:
+                                self.spawnEnnemi = [i,j]
                             # print(is_ours," - x:",i,",y:",j, ",spawn",spawn, ",convtodownspawn:",self.convToDown(spawn[0], spawn[1]))
 
                             # print(i,j, spawn, is_ours)
@@ -67,10 +69,13 @@ class Carte:
                         self.unites[i][j] = class_instantiate(appartenance= 0, position = [i,j])
                         self.listeUnites.append(self.unites[i][j])
 
+        #print(self.spawnEnnemi)
+
     def __init__(self, data):
         raw_terrain = [b.split(" ") for b in data['map'].split("\n")][:-1]
         # print("raw spawn",data["spawn"])
         self.spawn = position_UD_to_serial(data['spawn'])
+
         self.x = len(raw_terrain[0])
         self.y = len(raw_terrain)
 
@@ -128,7 +133,14 @@ class Carte:
 
     def convToDown(self, x, y):
         return x // 2, y, bool(x % 2)
-        
+
+    #Renvoie le nombre de casernes alliées
+    def nombreCasernes(self):
+        nb=0
+        for i in self.listeBatiments:
+            if(i.appartenance == 1 and i.identifiant == "C"):
+                nb+=1
+        return nb
     
     def estVide(self,x,y):
         return (self.batiments[x][y] == None and self.unites[x][y] == None)

@@ -107,8 +107,11 @@ class Player:
 
 
                 # TODO PLUS TARD
-                # Si il se déplace pour construire un amphi
-                # if unite.role == 3:
+                # Il se déplace pour construire un amphi
+                if unite.role == 3:
+                    pass
+
+
                 # si sur case target
                 # construire
                 # Réaffecter a rôle = 0
@@ -161,14 +164,47 @@ class Player:
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
 
-    def PPA(self, move, attack):
-        pass
+    def PPA(self, turn, move, attack):
+
+        for unite in self.game_map.listeUnites:
+            # Check si PPA/Tank
+            if unite.identifiant == "L" or unite.identifiant == "H":
+                if unite.target:
+
+                    # Se déplace vers le spawn ennemi
+                    moves = src.util.nextPositions(
+                        (unite.position[0], unite.position[1]),
+                        self.game_map,
+                        (unite.target[0], unite.target[1])
+                        , unite.pointMouvement
+                    )
+
+                    turn.deplacer_unite(unite.position, moves)
+                else:
+                    pass
+
+        # Summon le max d'ingés (autour du spawn)
+        # Mise à jour de la liste d'ingés
 
     def compute_all_summonings(self):
         for i in range(len(self.game_map.batiments)):
             for j in range(len(self.game_map.batiments[0])):
                 if self.game_map.batiments[i][j] == None:
                     continue
+                if self.game_map.batiments[i][j].identifiant == "C" and self.game_map.batiments[i][j].appartenance == 1:
+                    voisins = self.game_map.adjacent(i, j)
+                    for v in voisins:
+                        if v:
+                            print("Voisin Caserne")
+                            print(v)
+                            print(self.game_map.unites[v[0]][v[1]])
+                            if not self.game_map.unites[v[0]][v[1]] and (
+                                self.game_map.terrain[v[0]][v[1]] == 0
+                                or self.game_map.terrain[v[0]][v[1]] == 1
+                            ):  # Case vide
+                                self.summon[tuple(v)] = "L"
+
+                                break
                 if (
                     self.game_map.batiments[i][j].identifiant == "S"
                     and self.game_map.batiments[i][j].appartenance == 1
@@ -181,21 +217,9 @@ class Player:
                                 or self.game_map.terrain[v[0]][v[1]] == "M"
                             ):  # Case vide
                                 self.summon[tuple(v)] = "V"
+
                                 break
 
-                if (
-                    self.game_map.batiments[i][j].identifiant == "C"
-                    and self.game_map.batiments[i][j].appartenance == 1
-                ):
-                    voisins = self.game_map.adjacent(i, j)
-                    for v in voisins:
-                        if v != None:
-                            if self.game_map.unites[v[0]][v[1]] == None and (
-                                self.game_map.terrain[v[0]][v[1]] == 0
-                                or self.game_map.terrain[v[0]][v[1]] == 1
-                            ):  # Case vide
-                                self.summon[tuple(v)] = "L"
-                                break
 
     def update(self, data):
         self.game_map.update(data)

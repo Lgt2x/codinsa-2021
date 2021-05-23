@@ -154,8 +154,12 @@ class Carte:
 
     def update(self, data):
         self.balance = data["balance"]
-        #Création d'une nouvelle liste avec que les unités à nous
+        # Création d'une nouvelle liste avec que les unités à nous
         newListeUnites = []
+        # update states of 
+        for unite in self.listeUnites:
+            unite.moved = False
+            unite.targetted = False
 
         for i in self.listeUnites:
             if(i.appartenance == 1):
@@ -178,6 +182,7 @@ class Carte:
                 #Recherche de l'unité au départ du mouvement
                 posDepart = position_UD_to_serial(start_pos)
                 posArrivee = position_UD_to_serial(inter_pos[-1])
+                print(moved)
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
                 #Update la position stockée par l'objet :
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
@@ -185,14 +190,14 @@ class Carte:
 
         #Attacked : Besoin pour les batiments adverses, pas les unites adv car elles sont maj par la vision
         for attacked in data["attacked"]:
-            if(attacked[1]): #Détruit
+            if(attacked[-1]): #Détruit
                 #check s'il s'ajit d'un bâtiment
-                posDestroy = position_UD_to_serial(attacked[0])
+                posDestroy = position_UD_to_serial(attacked[1]) # TODO
                 if(self.batiments[posDestroy[0]][posDestroy[1]] != None): #Ce bâtiment est alors détruit
                     self.listeBatiments.remove(self.batiments[posDestroy[0]][posDestroy[1]])
                     self.batiments[posDestroy[0]][posDestroy[1]] = None
         
-       #Killed 
+        #Killed 
         #Format : position, type (à vérifier)
         for killed in data["killed"]:
             posKilled = position_UD_to_serial(killed[0])

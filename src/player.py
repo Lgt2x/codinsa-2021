@@ -237,7 +237,6 @@ class Player:
         self.game_map.update(data)
 
 
-"""
     def play_defense(self, turn):
         def dToSpawn(position):
             return self.game_map.distance(position[0], self.game_map.spawn[0], position[1], self.game_map.spawn[1])
@@ -259,11 +258,7 @@ class Player:
                         if unite.target != None:
                             self.game_map.target[unite.target[0]][unite.target[1]] = False
                             unite.target = None
-                self.ingenieurs()
-            else:
-
-                # build tower
-                pass
+            self.ingenieurs()
         else:
             # si rapport de force déséquilibré, former des unités
             MAX_FORMATION = 4
@@ -311,4 +306,3 @@ class Player:
                     turn.move(my_unit.position, moves)
                     positions_futur_taken.append(moves[-1])
                     my_unit.moved = True
-            """

@@ -72,8 +72,9 @@ for turn_number in range(10000):
     # if len(data) == 2:
     #     break
 
-    if data[-1]["your_turn"] == False:
-        continue
+    if "your_turn" in data[-1]:
+        if not data[-1]["your_turn"]:
+            continue
 
     # On joue
     turn_instance = Turn(game_map,turn_number)

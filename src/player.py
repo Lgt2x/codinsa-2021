@@ -18,9 +18,42 @@ class Player:
         return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":final_summon}
 
     def ingenieurs(self,move,attack,mine,build):
-        pass
+        """
+        détermine le comportement et les sorties des ingénieurs
+        """
+        
+        
 
-    def PPA(self,move,attack):
+        #Pour chaque unite
+        for unite in carte.unites:
+            #check si inge
+            if unite.identifiant == "V"
+                #Si role == 2
+                    # Miner
+
+                #Si role == 1
+                    #continuer déplacement
+                    #Si déplacement fini 
+                        #role = 2
+
+                #Si role == 3
+                    #si sur case target
+                        #construire
+                        # Réaffecter a rôle = 0
+                    #else se déplace vers target
+
+                #si role == 0
+                    #si gold > 250 + x
+                        # Affecter a rôle 3
+                        # Donne les coordonnees de la target
+                    
+                    #else
+                        #affecter a role 1 et trouver la ressource libre la plus proche
+
+        # Summon le max d'ingés (autour du spawn)
+        # Mise à jour de la liste d'ingés
+
+    def PPA(self, move, attack):
         pass
 
     def compute_all_summonings(self,dict_summons):

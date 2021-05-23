@@ -3,18 +3,21 @@ import json
 class Turn():
     """La classe Turn doit permettre d'encapsuler toutes les actions avant leur passage à la sortie pour l'api.
     On doit pouvoir interagir avec dans 'notre langage', ie notre systeme de coordonnées
-    """    
+
     d_attack = {}
     d_mine = {}
     d_build = {}
     d_summon = {}
-    d_move = {}
-
-    def __init__(self, game_map, n_turn):
+    d_move = {}"""
+    def __init__(self, game_map):
         # definir des structures de données qui vont stocker toutes les actions comme vous l'aviez fait dans le main
         self.game_map = game_map
-        self.n_turn = n_turn
-        
+        self.d_attack = {}
+        self.d_mine = {}
+        self.d_build = {}
+        self.d_summon = {}
+        self.d_move = {}
+
     def conv(self, pos):
         return position_serial_to_UD(pos)
     def cdump(self,pos):
@@ -30,19 +33,19 @@ class Turn():
         self.d_mine[self.conv(pos_inge)] = self.l_conv(pos_ressource)# check double array
 
     def summon(self,pos_summon, type_summon):
-        self.d_summon[self.conv(pos_summon)] = type_summon # OK 
+        self.d_summon[self.conv(pos_summon)] = type_summon # OK
 
     #Met à jour sa position dans notre perception temporaire du jeu
     #Retirer si beug chelou
     def deplacer_unite(self,position_depart, liste_pos):
         self.d_move[self.conv(position_depart)] = [self.l_conv(x) for x in liste_pos]
-    
+
     def attaquer_position(self,position_depart, position_arrivee):
         self.d_attack[self.conv(position_depart)] = self.l_conv(position_arrivee) # check double array
-    
+
     def build(self,pos_inge, pos_build, type_build):
         self.d_build[self.conv(pos_inge)] = [self.l_conv(pos_build), type_build]
-    
+
     def get_json_turn(self):
         full_dict = {}
         for (d, final_key) in zip([self.d_attack, self.d_mine, self.d_build, self.d_summon, self.d_move], ["attack", "mine", "build", "summon", "move"]):

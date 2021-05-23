@@ -89,6 +89,7 @@ class Carte:
 
         self.decode_raw_terrain(raw_terrain=raw_terrain, spawn=self.spawn)
         self.balance = 0
+        self.ressources = self.nbRessources()
 
     def adjacent(self, x, y):
         adj1 = None
@@ -288,3 +289,20 @@ class Carte:
             for j in range(len(self.terrain[0])):
                 if self.distance(i, pos_center[0], j, pos_center[1]) <= perimeter:
                     continue
+
+    def nbIngenieurs(self):
+        count = 0
+        for unite in self.listeUnites:
+            if unite.identifiant == 'V':
+                count += 1
+        print("NbInge :",count)
+        return count
+
+    def nbRessources(self):
+        count = 0
+        for ligne in self.terrain:
+            for tile in ligne:
+                if tile == 'R':
+                    count +=1
+        print("NbRess :",count)
+        return count

@@ -112,11 +112,12 @@ def ennemyFinder(depart, carte):
 
         current = pQ.get()
 
-        # print("Current= ", current)
+        print("Current= ", current)
 
         if visited[current[1][0]][current[1][1]]:
             continue
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==0:
+            print("AAAAAAAAAAAAAA")
             return current[1]
         if carte.unites[current[1][0]][current[1][1]] is not None and carte.unites[current[1][0]][current[1][1]].appartenance==0:
             return current[1]
@@ -150,7 +151,7 @@ def ennemyFinder(depart, carte):
                     pred[adj[0]][adj[1]] = current[1]
                     pQ.put((dist[adj[0]][adj[1]], adj))
 
-    print(carte.spawnEnnemi , "="*20)
+    # print(carte.spawnEnnemi , "="*20)
     return carte.spawnEnnemi
 
 def closestAvailableRessource(unite, carte):
@@ -199,19 +200,19 @@ def closestPath(unite, carte, x, y, compteurRec=0):
 
 
 def miner(unite, game_map):
-    print("A")
+
     if unite.identifiant == 'V':
-        print("B")
+
         # on check si les cases adjacentes a l'inge sont des ressources
         voisins = game_map.adjacent(unite.position[0], unite.position[1])
         for v in voisins:
-            print("C")
+
             if game_map.terrain[v[0]][v[1]] == "R":
-                print("D")
+
                 # On retourne la pos de la ressource
                 return v
     # si pas de ressources ou mauvaise unite
-    print("E")
+
     return []
 
 

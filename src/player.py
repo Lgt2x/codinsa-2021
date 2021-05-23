@@ -25,15 +25,15 @@ class Player:
         # On joue avec les PPA
 
         # On calcule les summons
-        self.compute_all_summonings()
+        self.compute_all_summonings(turn)
 
-        # Conversions des summons dans le format de sortie
+        """# Conversions des summons dans le format de sortie
 
         final_summon = {}
         for location, unit in self.summon.items():
             key = str(list(self.game_map.convToDown(*location))).lower()
             final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
-            turn.summon(location, unit)
+            turn.summon(location, unit)"""
 
         # for unite in self.game_map.listeUnites:
         #     if unite.appartenance:
@@ -42,13 +42,7 @@ class Player:
         #             if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
         #                 turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
-        return {
-            "move": self.move,
-            "attack": self.attack,
-            "mine": self.mine,
-            "build": self.build,
-            "summon": final_summon,
-        }
+        
 
     def ingenieurs(self, turn):
         """
@@ -186,40 +180,27 @@ class Player:
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
 
-    def compute_all_summonings(self):
-        for i in range(len(self.game_map.batiments)):
-            for j in range(len(self.game_map.batiments[0])):
-                if self.game_map.batiments[i][j] == None:
-                    continue
-                if self.game_map.batiments[i][j].identifiant == "C" and self.game_map.batiments[i][j].appartenance == 1:
-                    voisins = self.game_map.adjacent(i, j)
+    def compute_all_summonings(self,turn):
+        nbInge = self.game_map.nbIngenieurs()
+
+        print("Ressources :",self.game_map.ressources)
+        #Spawn inge
+        if nbInge < self.game_map.ressources*3:
+            print("je suis dans le if")
+            for b in self.game_map.listeBatiments:
+                #Notre spawn:
+                if b.identifiant=='S' and b.appartenance == 1:
+                    voisins = self.game_map.adjacent(*b.position)
                     for v in voisins:
-                        if v:
-                            print("Voisin Caserne")
-                            print(v)
-                            print(self.game_map.unites[v[0]][v[1]])
-                            if not self.game_map.unites[v[0]][v[1]] and (
-                                self.game_map.terrain[v[0]][v[1]] == 0
-                                or self.game_map.terrain[v[0]][v[1]] == 1
-                            ):  # Case vide
-                                self.summon[tuple(v)] = "L"
+                        if nbInge < 3*self.game_map.ressources:
+                            turn.summon(v,"V")
+                            nbInge+=1
 
-                                break
-                if (
-                    self.game_map.batiments[i][j].identifiant == "S"
-                    and self.game_map.batiments[i][j].appartenance == 1
-                ):
-                    voisins = self.game_map.adjacent(i, j)
-                    for v in voisins:
-                        if v:
-                            if not self.game_map.unites[v[0]][v[1]] and (
-                                self.game_map.terrain[v[0]][v[1]] == "F"
-                                or self.game_map.terrain[v[0]][v[1]] == "M"
-                            ):  # Case vide
-                                self.summon[tuple(v)] = "V"
-
-                                break
-
+        #Spawn PPA
+        
+                        
+                        
+                    
 
     def update(self, data):
         self.game_map.update(data)

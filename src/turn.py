@@ -3,15 +3,20 @@ import json
 class Turn():
     """La classe Turn doit permettre d'encapsuler toutes les actions avant leur passage à la sortie pour l'api.
     On doit pouvoir interagir avec dans 'notre langage', ie notre systeme de coordonnées
-    """    
+       
     d_attack = {}
     d_mine = {}
     d_build = {}
     d_summon = {}
-    d_move = {}
+    d_move = {}"""
     def __init__(self, game_map):
         # definir des structures de données qui vont stocker toutes les actions comme vous l'aviez fait dans le main
         self.game_map = game_map
+        self.d_attack = {}
+        self.d_mine = {}
+        self.d_build = {}
+        self.d_summon = {}
+        self.d_move = {} 
 
     def conv(self, pos):
         return position_serial_to_UD(pos)

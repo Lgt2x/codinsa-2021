@@ -176,7 +176,7 @@ class Player:
 
         for unite in self.game_map.listeUnites:
             # Check si PPA/Tank
-            if unite.identifiant == "L" or unite.identifiant == "H":
+            if (unite.identifiant == "L" or unite.identifiant == "H") and unite.appartenance:
                 print("PPPPPAAAAAA")
                 attaque = src.util.attaquerAdj(unite, self.game_map)
                 if attaque and len(attaque) != 0:
@@ -191,6 +191,7 @@ class Player:
                     if ennemy is not None:
                         print("C")
                         adjEnn = src.util.closestPath(unite,self.game_map,ennemy[0],ennemy[1])
+                        print()
                         moves = src.util.nextPositions(
                             unite.position,
                             self.game_map,

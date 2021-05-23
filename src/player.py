@@ -3,7 +3,7 @@ import src.util
 import json
 
 import src.turn
-
+import time
 seuilPPA = 80
 seuilTank = 1000
 seuilCaserne1 = 350
@@ -179,8 +179,12 @@ class Player:
         # Mise à jour de la liste d'ingés
 
     def PPA(self, turn):
-
+        t = time.time()
         for unite in self.game_map.listeUnites:
+            print(time.time() - t)
+            if time.time() - t > 0.5:
+                print("timeout")
+                break
             # Check si PPA/Tank
             if (unite.identifiant == "L" or unite.identifiant == "H") and unite.appartenance:
                 # print("PPPPPAAAAAA")

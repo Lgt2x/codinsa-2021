@@ -116,24 +116,26 @@ class Player:
                     print("Position: ", unite.position)
 
                     # Si on a assez de gold, on crée une caserne pour former des PPA
-                    if self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0 and not caserne_construite:
+                    seuils = [350,1000,1000]
+                    
+                    if self.game_map.nombreCasernes() < 3 and self.game_map.balance > seuils[self.game_map.nombreCasernes()] and not caserne_construite:
                         # Ordre de construction de la caserne a cote du larbin
                         voisins = self.game_map.adjacent(*unite.position)
-
                         # ne garder que les voisins qui peuvent rellement être construits
                         def compute_min_distance_others(case, batiments):
                             mini = float('inf')
                             for b in batiments:
-                                mini = min(mini, self.game_map.distance(case[0], b.position[0], case[1], b.position[1]))
+                                mini = min(mini, self.game_map.distance(case[0], case[1], b.position[0], b.position[1]))
                             return mini
-
-                        my_batiments = [x for x in self.game_map.listeBatiments if x.appartenance]
+                        my_batiments = [x for x in self.game_map.listeBatiments if x.appartenance==1]
                         minis = [compute_min_distance_others(x, my_batiments) for x in voisins]
                         voisins_ok = []
                         for it_voisin in range(len(voisins)):
-                            if minis[it_voisin] >= 2 and minis[it_voisin] <= 4:
+                            if minis[it_voisin] >= 2 and minis[it_voisin] <=4:
                                 voisins_ok.append(voisins[it_voisin])
-                        for v in voisins:
+
+
+                        for v in voisins_ok:
                             # list constructibles around
                             v_v = self.game_map.adjacent(*v)
                             cpt_ok = sum([self.game_map.estConstructible(*x) for x in v_v])
@@ -236,7 +238,7 @@ class Player:
 
     def play_defense(self, turn):
         def dToSpawn(position):
-            return self.game_map.distance(position[0], self.game_map.spawn[0], position[1], self.game_map.spawn[1])
+            return self.game_map.distance(position[0], position[1],  self.game_map.spawn[0], self.game_map.spawn[1])
         # get opponent units in perimeter:
         PERIMETER_DANGER = 5
         optimum_amphi = 2
@@ -274,7 +276,7 @@ class Player:
                 while(cpt_forme < MAX_FORMATION and all_pos_formations):
                     close_enemy = distances_positions_unites[0][0]
                     # former sur la position la plus proche d un ennemi
-                    all_pos_formations = sorted(all_pos_formations, key = lambda x: self.game_map.distance(x[0], close_enemy[0], x[1], close_enemy[1]))
+                    all_pos_formations = sorted(all_pos_formations, key = lambda x: self.game_map.distance(x[0],  x[1], close_enemy[0],close_enemy[1]))
                     # tout en restant aussi proche que possible du spawn
                     all_pos_formations = sorted(all_pos_formations, key = lambda x: dToSpawn(x))
 
@@ -288,7 +290,7 @@ class Player:
             # for each of my units, if I can already target someone, do it
             for my_unit in unites_perimeter:
                 for opp_unit in opponents_perimeter:
-                    if self.game_map.distance(my_unit.position[0], opp_unit.position[0], my_unit.position[1], opp_unit.position[1]) == 1:
+                    if self.game_map.distance(my_unit.position[0], my_unit.position[1], opp_unit.position[0], opp_unit.position[1]) == 1:
                         turn.attaquer_position(my_unit.position, opp_unit.position)
                         opp_unit.targeted = True
                         my_unit.moved = True

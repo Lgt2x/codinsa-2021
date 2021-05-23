@@ -19,7 +19,7 @@ dirpath = f"game_viz/{target_dir}"
 if os.path.exists(dirpath) and os.path.isdir(dirpath):
     shutil.rmtree(dirpath)
 os.makedirs(dirpath)
-border_lgd = 200
+border_lgd = 300
 for index, state in tqdm(enumerate(data), total = len(data)):
     game_map = state["map_representation"]
     

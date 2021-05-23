@@ -112,12 +112,18 @@ def ennemyFinder(depart, carte):
 
         current = pQ.get()
 
+        #print("Current= ", current)
 
         if visited[current[1][0]][current[1][1]]:
             continue
+        # print("UNITE======= ",carte.unites[current[1][0]][current[1][1]])
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==0:
             return current[1]
         if carte.unites[current[1][0]][current[1][1]] is not None and carte.unites[current[1][0]][current[1][1]].appartenance==0:
+            # print("AAAAAAAAAAAAAA")
+            return current[1]
+        if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==2:
+
             return current[1]
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==2:
             return current[1]
@@ -136,9 +142,7 @@ def ennemyFinder(depart, carte):
                 cout = 2
             elif terrain == 'A':
                 continue
-            if carte.batiments[adj[0]][adj[1]] is not None and not carte.batiments[adj[0]][adj[1]].appartenance:
-                continue
-            elif carte.unites[adj[0]][adj[1]] is not None:
+            if carte.unites[adj[0]][adj[1]] is not None and carte.unites[adj[0]][adj[1]].appartenance:
                 continue
 
             if dist[adj[0]][adj[1]] == -1:
@@ -194,7 +198,7 @@ def closestPath(unite, carte, x, y, compteurRec=0):
 
     if carte.batiments[dest[0]][dest[1]] is not None or carte.unites[dest[0]][dest[1]] is not None or \
             carte.target[dest[0]][dest[1]]:
-        print("Appel recursif")
+        # print("Appel recursif")
         dest = closestPath(unite, carte, dest[0], dest[1], compteurRec + 1)
     return dest
 

@@ -206,6 +206,11 @@ class Carte:
                 if(self.unites[posKilled[0]][posKilled[1]] == None):
                     print("Erreur, on nous dit qu'on a kill une case vide")
                 else:
+                    if(type=="V" and self.unites[posKilled[0]][posKilled[1]].role == 1): #Ingénieur tué
+                        cordObj = self.unites[posKilled[0]][posKilled[1]].target
+                        self.target[cordObj[0]][cordObj[1]] = False
+
+                        
                     self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
                     self.unites[posKilled[0]][posKilled[1]] = None
             else:

@@ -5,8 +5,9 @@ import plot_tools as plot_tools
 import json
 import os
 import shutil
-source_file = "game_logs/log_game.json"
-target_dir = "first_log"
+from tqdm import tqdm
+source_file = "game_logs/summon_game.json"
+target_dir = "summon_game"
 with open(source_file,'r') as file:
     data = json.load(file)
 # data["state_0"](is_ours(tile), is_batiment(tile))
@@ -18,7 +19,7 @@ dirpath = f"game_viz/{target_dir}"
 if os.path.exists(dirpath) and os.path.isdir(dirpath):
     shutil.rmtree(dirpath)
 os.makedirs(dirpath)
-for index, state in enumerate(data):
+for index, state in tqdm(enumerate(data), total = len(data)):
     game_map = state["map_representation"]
 
     im = Image.new(mode = 'RGB', size = (size_img,size_img))

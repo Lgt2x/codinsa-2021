@@ -70,16 +70,17 @@ def draw_tile(draw, size, cord_x, cord_y, tile_A, tile_B, current_modedisplay):
                 txt_draw = True  # get the name of the tile
             if tile["type"] == "W":
                 color_final = colors_tiles[tile["type"]] # useful for walls
+                txt_draw = False
 
         draw.polygon(position, outline="black", fill=color_final)
         if is_batiment(tile):
             for i in range(3):
                 all_positions_lines.append([position[i % 3], position[(i + 1) % 3]])
 
-        font = ImageFont.truetype("src/gameviz/fonts/arial.ttf", size=25)
+        font = ImageFont.truetype("src/gameviz/fonts/arial.ttf", size=18)
         if txt_draw:
             pos_txt = (
-                -10
+                -5
                 + (max([x[0] for x in position]) + min([x[0] for x in position])) / 2,
                 -10 + sum([x[1] for x in position]) / 3,
             )

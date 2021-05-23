@@ -180,11 +180,8 @@ class Player:
 
     def compute_all_summonings(self,turn):
         nbInge = self.game_map.nbIngenieurs()
-
-        print("Ressources :",self.game_map.ressources)
         #Spawn inge
         if nbInge < self.game_map.ressources*3:
-            print("je suis dans le if")
             for b in self.game_map.listeBatiments:
                 #Notre spawn:
                 if b.identifiant=='S' and b.appartenance == 1:
@@ -193,6 +190,15 @@ class Player:
                         if nbInge < 3*self.game_map.ressources:
                             turn.summon(v,"V")
                             nbInge+=1
+
+
+        #Spawn PPA
+        for b in self.game_map.listeBatiments:
+            if b.identifiant == 'C' and b.appartenance == 1:
+                voisins = self.game_map.adjacent(*b.position)
+                for v in voisins:
+                    turn.summon(v,"L")
+
 
     def update(self, data):
         self.game_map.update(data)

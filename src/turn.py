@@ -9,7 +9,7 @@ class Turn():
     d_build = {}
     d_summon = {}
     d_move = {}"""
-    def __init__(self, game_map):
+    def __init__(self, game_map, turn_number):
         # definir des structures de données qui vont stocker toutes les actions comme vous l'aviez fait dans le main
         self.game_map = game_map
         self.d_attack = {}
@@ -17,6 +17,7 @@ class Turn():
         self.d_build = {}
         self.d_summon = {}
         self.d_move = {}
+        self.turn_number=turn_number
 
     def conv(self, pos):
         return position_serial_to_UD(pos)

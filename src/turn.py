@@ -9,9 +9,10 @@ class Turn():
     d_build = {}
     d_summon = {}
     d_move = {}
-    def __init__(self):
+    def __init__(self, game_map):
         # definir des structures de données qui vont stocker toutes les actions comme vous l'aviez fait dans le main
-        pass
+        self.game_map = game_map
+
     def conv(self, pos):
         return position_serial_to_UD(pos)
     def cdump(self,pos):
@@ -29,6 +30,8 @@ class Turn():
     def summon(self,pos_summon, type_summon):
         self.d_summon[self.conv(pos_summon)] = type_summon # OK 
 
+    #Met à jour sa position dans notre perception temporaire du jeu
+    #Retirer si beug chelou
     def deplacer_unite(self,position_depart, liste_pos):
         self.d_move[self.conv(position_depart)] = [self.l_conv(x) for x in liste_pos]
     

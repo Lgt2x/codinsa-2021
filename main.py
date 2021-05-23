@@ -32,14 +32,14 @@ elif mode == "pvp_join":
 connexion.connect()
 turn1 = connexion.getMap()
 
-map = Carte(turn1)
+game_map = Carte(turn1)
 
 logger = GameLogger("game_logs/summon_game.json")
-player = Player(map)
+player = Player(game_map)
 
 if turn1["your_turn"]:
     print("On joue en premier")
-    turn_instance = Turn()
+    turn_instance = Turn(game_map)
     turn = player.play(turn_instance)
     connexion.sendTurn(turn)
 else:

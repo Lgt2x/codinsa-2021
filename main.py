@@ -75,15 +75,14 @@ for turn_number in range(10000):
     if "your_turn" in data[-1]:
         if not data[-1]["your_turn"]:
             continue
+    else:
+        break
 
     # On joue
     turn_instance = Turn(game_map,turn_number)
     played = player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player)
-
-    if turn_number >60:
-        break
 
 connexion.deleteGames(connexion.game_id)
 logger.save_logs()

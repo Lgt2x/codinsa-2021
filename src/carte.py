@@ -10,6 +10,11 @@ class Terrain(Enum):
     A = 2
     R = 3
 
+class Point:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
 
 dict_classes_batiment = {
     "S": batiment.Ecole,
@@ -124,6 +129,11 @@ class Carte:
     def convToDown(self, x, y):
         return x // 2, y, bool(x % 2)
 
+    #True si le terrain est F ou M et qu'il n'y a pas d'unité ou construction dessus
+    def estConstructible(self,x,y):
+        typeTerrain = self.terrain[x][y]
+        return (((typeTerrain == "M") or (typeTerrain == "F")) and self.batiments[x][y] == None and self.unite[x][y] == None)
+
     def update(self, data):
 
         #Création d'une nouvelle liste avec que les unités à nous
@@ -173,16 +183,19 @@ class Carte:
                 self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[summon[2]](appartenance=1, position=posConstruction)
                 self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
                 
-        #Killed : nécessaire car nos unités ne sont pas reset à chaque fois.
+        #Killed : nécessaire uniquement pour les bâtiments !
+
+
         #Format : position, type (à vérifier)
         for killed in data["killed"]:
             posKilled = position_UD_to_serial(killed[0])
-
-            if(self.unites[posKilled[0]][posKilled[1]] == None):
-                print("Erreur, on nous dit qu'on a kill une case vide")
-            else:
-                self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
-                self.unites[posKilled[0]][posKilled[1]] = None
+            type = killed[1]
+            if(type == "V" or type == "L" or type == "H"): #Une de nous UNITES a été destroy
+                if(self.unites[posKilled[0]][posKilled[1]] == None):
+                    print("Erreur, on nous dit qu'on a kill une case vide")
+                else:
+                    self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
+                    self.unites[posKilled[0]][posKilled[1]] = None
 
         for (position, info) in data["visible"].items():
             #print(position, info)
@@ -202,18 +215,7 @@ class Carte:
                 type = infos[1]
                 #Unite
                 if(type == "V" or type == "L" or type == "H"):
-                    if(self.batiments[posConvert[0]][posConvert[1]] != None and self.batiments[posConvert[0]][posConvert[1]].identifiant == type):
-                        #Update le batiment
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
-                    else:
-                        #Création du batiment (il est forcément pas à nous)
-                        self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
-
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
-                        self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
-                #Batiment
-                else:
-                    if(self.unites[posConvert[0]][posConvert[1]] != None and self.unites[posConvert[0]][posConvert[1]].identifiant == type):
+                    if(self.unites[posConvert[0]][posConvert[1]] != None):
                         #Update l'unite
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                     else:
@@ -222,8 +224,25 @@ class Carte:
 
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                         self.listeUnites.append(self.unites[posConvert[0]][posConvert[1]])
+                #Batiment
+                else:
+                    if(self.batiments[posConvert[0]][posConvert[1]] != None):
+                        #Update le batiment
+                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                    else:
+                        #Création du batiment (il est forcément pas à nous)
+                        self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
+
+                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
+                    
 
 
+                        
+
+        for i in self.listeUnites:
+            print(i.position)
+            print(i.appartenance)
 
     def convToDown(self, x, y):
         return x // 2, y, x % 2

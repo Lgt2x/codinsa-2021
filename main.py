@@ -52,7 +52,7 @@ for turn_number in range(1001):
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player.game_map)
 
-    if turn_number > 3:
+    if turn_number > 10:
         break
 
 connexion.deleteGames(connexion.game_id)

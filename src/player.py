@@ -4,45 +4,75 @@ class Player:
         self.game_map = game_map
     
     def play(self):
-        print("asked for play.")
-        move = {}
-        attack = {}
-        mine = {}
-        build = {}
-        summon = {}
-        self.compute_all_summonings(summon)
+        print("Commence notre tour")
+
+        self.move = {}
+        self.attack = {}
+        self.mine = {}
+        self.build = {}
+        self.summon = {}
+
+        # On joue avec les ingés
+        self.ingenieurs()
+
+        # On joue avec les PPA
+
+        # On calcule les summons
+        self.compute_all_summonings()
+
+        # Conversions des summons dans le format de sortie
         final_summon = {}
-        for location, unit in summon.items():
+        for location, unit in self.summon.items():
             key = str(list(self.game_map.convToDown(*location))).lower()
             final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
+
+        # On renvoie à l'IO les bonnes infos
         return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":final_summon}
 
-    def ingenieurs(self,move,attack,mine,build):
+    def ingenieurs(self):
         """
         détermine le comportement et les sorties des ingénieurs
         """
         
-        
+        for unite in self.game_map.listeUnites:
+            # Check si inge
+            if unite.identifiant == "V" and unite.appartenance == 1:
 
-        #Pour chaque unite
-        for unite in carte.unites:
-            #check si inge
-            if unite.identifiant == "V"
-                #Si role == 2
-                    # Miner
+                # Si le déplacement est fini 
+                if unite.role == 1 and unite.position == unite.target:
+                    #On l'assigne au minage
+                    unite.role = 2
+                    unite.target = None
 
-                #Si role == 1
+                # Si il est en train de miner
+                if unite.role == 2:
+                    # On regarde quel voisin est une ressource
+                    voisins = self.game_map.adjacent(unite.position.x,unite.position.y)
+                    for v in voisins:
+                        if self.game_map.terrain[v[0],v[1]] == 3:
+                            # On ajoute à la liste de minage
+                            self.mine[str(self.game_map.position_serial_to_UD(unite.position[0], unite.position[1]))] = self.game_map.position_serial_to_UD(v[0], v[1])
+                            break
+                            
+                # Si il se déplace vers la ressource
+                if unite.role == 1:
+                    import src.util.nextPositions
+                    moves = nextPositions((unite.position[0], unite.position[1]), self.game_map, (unite.target[0], unite.target[1], unite.pointMouvement)
+                    self.moves[]
                     #continuer déplacement
-                    #Si déplacement fini 
-                        #role = 2
+                
+                        
 
-                #Si role == 3
+                #Si il se déplace pour construire un amphi
+                #if unite.role == 3:
                     #si sur case target
                         #construire
                         # Réaffecter a rôle = 0
                     #else se déplace vers target
 
-                #si role == 0
+                #Si il n'a pas de role
+                if unite.role == 0:
+                    pass
                     #si gold > 250 + x
                         # Affecter a rôle 3
                         # Donne les coordonnees de la target
@@ -56,29 +86,7 @@ class Player:
     def PPA(self, move, attack):
         pass
 
-    def compute_all_summonings(self,dict_summons):
-        for i in self.game_map.listeBatiments:
-            if(i.appartenance):
-                if(i.identifiant=='S'):
-                    voisins = self.game_map.adjacent(i.position[0],i.position[1])
-                    for v in voisins:
-                        if(v!=None):
-                            if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == "F" or self.game_map.terrain[v[0]][v[1]] == "M")): #Case vide
-                                dict_summons[tuple(v)] = "V"
-                                break
-                if(i.identifiant=='C'):
-                    voisins = self.game_map.adjacent(i.position[0],i.position[1])       
-                    for v in voisins:
-                        if(v!=None):
-                            if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == 0 or self.game_map.terrain[v[0]][v[1]] == 1)): #Case vide
-                                dict_summons[tuple(v)] = "L"
-                                break
-            
-        
-    
-
-
-        """
+    def compute_all_summonings(self):
         for i in range(len(self.game_map.batiments)):
             for j in range(len(self.game_map.batiments[0])):
                 if self.game_map.batiments[i][j] == None:
@@ -89,7 +97,7 @@ class Player:
                     for v in voisins:
                         if(v!=None):
                             if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == "F" or self.game_map.terrain[v[0]][v[1]] == "M")): #Case vide
-                                dict_summons[tuple(v)] = "V"
+                                self.summon[tuple(v)] = "V"
                                 break
                     
                 if self.game_map.batiments[i][j].identifiant == 'C' and self.game_map.batiments[i][j].appartenance == 1:
@@ -97,9 +105,8 @@ class Player:
                     for v in voisins:
                         if(v!=None):
                             if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == 0 or self.game_map.terrain[v[0]][v[1]] == 1)): #Case vide
-                                dict_summons[tuple(v)] = "L"
+                                self.summon[tuple(v)] = "L"
                                 break
-            """
     
     def update(self, data):
         self.game_map.update(data)

@@ -32,7 +32,7 @@ class Player:
             turn.summon(location, unit)
 
         # On renvoie à l'IO les bonnes infos
-        return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":final_summon}
+        return {"move":self.move,"attack":self.attack,"mine":self.mine,"build":self.build,"summon":final_summon}
 
     def ingenieurs(self):
         """

@@ -36,7 +36,7 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
             cout = 0
             if terrain == 'R':
                 continue
-            if terrain == 'F':
+            elif terrain == 'F':
                 cout = 1
             elif terrain == 'M':
                 cout = 2
@@ -67,7 +67,25 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
     while list(pred[rep[-1][0]][rep[-1][1]]) != list(depart):
         rep.append(pred[rep[-1][0]][rep[-1][1]])
     # print(rep)
-    return [rep.pop(-1) for _ in range(min(len(rep), nbDeplacement))]
+    a = []
+    pas = nbDeplacement
+
+    while pas > 0:
+        if len(rep) == 0:
+            break
+        elem = rep.pop(-1)
+
+        if carte.terrain[elem[0]][elem[1]] == 'F':
+            pas -= 1
+            a.append(elem)
+        elif carte.terrain[elem[0]][elem[1]] == 'M':
+            pas -= 2
+            if pas<0:
+                break
+            else:
+                a.append(elem)
+
+    return a
 
 
 def closestAvailableRessource(unite, carte):
@@ -85,7 +103,7 @@ def closestAvailableRessource(unite, carte):
                     # print("adj: ", adj)
                     if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
                         if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None and not \
-                        carte.target[adj[0]][adj[1]]:
+                                carte.target[adj[0]][adj[1]]:
                             dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
                             if dist < minDist:
                                 minDist = dist
@@ -116,14 +134,19 @@ def closestPath(unite, carte, x, y, compteurRec=0):
 
 
 def miner(unite, game_map):
+    print("A")
     if unite.identifiant == 'V':
+        print("B")
         # on check si les cases adjacentes a l'inge sont des ressources
         voisins = game_map.adjacent(unite.position[0], unite.position[1])
         for v in voisins:
-            if game_map.terrain[v[0]][v[1]] == 3:
+            print("C")
+            if game_map.terrain[v[0]][v[1]] == "R":
+                print("D")
                 # On retourne la pos de la ressource
                 return v
     # si pas de ressources ou mauvaise unite
+    print("E")
     return []
 
 

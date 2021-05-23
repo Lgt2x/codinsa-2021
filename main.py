@@ -28,6 +28,7 @@ elif mode == "pvp_join":
     print(f"Rejoint la salle PVP {sys.argv[3]}")
     connexion.joinGame(sys.argv[3])
 
+
 connexion.connect()
 turn1 = connexion.getMap()
 
@@ -76,12 +77,12 @@ for turn_number in range(10000):
         continue
 
     # On joue
-    turn_instance = Turn()
+    turn_instance = Turn(game_map)
     played = player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player)
 
-    if turn_number > 10:
+    if turn_number >30:
         break
 
 connexion.deleteGames(connexion.game_id)

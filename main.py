@@ -39,7 +39,7 @@ player = Player(game_map)
 
 if turn1["your_turn"]:
     print("On joue en premier")
-    turn_instance = Turn(game_map)
+    turn_instance = Turn(game_map, turn_number)
     turn = player.play(turn_instance)
     connexion.sendTurn(turn)
 else:
@@ -54,9 +54,9 @@ for turn_number in range(10000):
 
     # Si on reçoit plusieurs tours, on les traite 1 par 1
     for d in data:
-        if "errors" in d:
-            print("Erreurs !")
-            print(d["errors"])
+        # if "errors" in d:
+        #     print("Erreurs !")
+        #     print(d["errors"])
 
         # La partie est terminée
         if "your_turn" not in d:
@@ -69,20 +69,19 @@ for turn_number in range(10000):
 
         player.update(d)
 
-    print(data)
-    if len(data) == 2:
-        break
+    # if len(data) == 2:
+    #     break
 
     if data[-1]["your_turn"] == False:
         continue
 
     # On joue
-    turn_instance = Turn(game_map)
+    turn_instance = Turn(game_map, turn_number)
     played = player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player)
 
-    if turn_number >30:
+    if turn_number >60:
         break
 
 connexion.deleteGames(connexion.game_id)

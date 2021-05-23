@@ -126,8 +126,24 @@ class Player:
                     if self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0 and not caserne_construite:
                         #Ordre de construction de la caserne a cote du larbin
                         voisins = self.game_map.adjacent(*unite.position)
+                        # ne garder que les voisins qui peuvent rellement être construits
+                        def compute_min_distance_others(case, batiments):
+                            mini = float('inf')
+                            for b in batiments:
+                                mini = min(mini, self.game_map.distance(case[0], b.position[0], case[1], b.position[1]))
+                            return mini
+                        
+                        my_batiments = [x for x in self.game_map.listeBatiments if x.appartenance]
+                        minis = [compute_min_distance_others(x, my_batiments) for x in voisins]
+                        voisins_ok = []
+                        for it_voisin in range(len(voisins)):
+                            if minis[it_voisin] >=2 and minis[it_voisin] <=4:
+                                voisins_ok.append(voisins[it_voisin])
                         for v in voisins:
-                            if self.game_map.estConstructible(*v):
+                            # list constructibles around
+                            v_v = self.game_map.adjacent(*v)
+                            cpt_ok = sum([self.game_map.estConstructible(*x) for x in v_v])
+                            if self.game_map.estConstructible(*v) and cpt_ok >=2:
                                 turn.build(unite.position, v, "C")
                                 caserne_construite = True
                                 break

@@ -9,10 +9,12 @@ class Turn():
     d_build = {}
     d_summon = {}
     d_move = {}
-    def __init__(self, game_map):
+
+    def __init__(self, game_map, n_turn):
         # definir des structures de données qui vont stocker toutes les actions comme vous l'aviez fait dans le main
         self.game_map = game_map
-
+        self.n_turn = n_turn
+        
     def conv(self, pos):
         return position_serial_to_UD(pos)
     def cdump(self,pos):

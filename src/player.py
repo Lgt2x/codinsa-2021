@@ -18,7 +18,7 @@ class Player:
         self.mine = {}
         self.build = {}
         self.summon = {}
-
+        
         # On joue avec les ingés
         self.ingenieurs(turn)
 
@@ -174,3 +174,7 @@ class Player:
 
     def update(self, data):
         self.game_map.update(data)
+
+    def play_defense(self):
+        # get a perimeter around spawn
+        pass

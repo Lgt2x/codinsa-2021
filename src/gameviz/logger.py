@@ -36,7 +36,7 @@ class GameLogger():
         for x in range(len_x):
             for y in range(len_y):
                 map_representation[y][x] = TileState(carte.terrain[x][y], carte.batiments[x][y], carte.unites[x][y]).to_dict()
-        self.all_states.append({"map_representation" : map_representation, "balance" : player.balance})
+        self.all_states.append({"map_representation" : map_representation, "balance" : player.game_map.balance})
     
     def save_logs(self):
         with open(self.target_file_location, 'w') as outfile : 

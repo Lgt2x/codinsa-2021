@@ -79,11 +79,11 @@ class Carte:
         self.unites = [[None for _ in range(self.y)] for _ in range(self.x)]
         self.discovered = [[False for _ in range(self.y)] for _ in range(self.x)]
         self.target = [[False for _ in range(self.y)] for _ in range(self.x)]
-
         self.listeBatiments = []
         self.listeUnites = []
 
         self.decode_raw_terrain(raw_terrain=raw_terrain, spawn=self.spawn)
+        self.balance = 0
 
     def adjacent(self, x, y):
         adj1 = None
@@ -140,6 +140,7 @@ class Carte:
 
 
     def update(self, data):
+        self.balance = data["balance"]
         #Création d'une nouvelle liste avec que les unités à nous
         newListeUnites = []
 
@@ -267,3 +268,11 @@ class Carte:
 
     def updateUnites(self, x, y, down, val):
         self.unites[x][y][down] = val
+
+    def get_all_pos_inside_perimeter(self, pos_center, perimeter):
+        tiles_inside_perimeter = (])
+        for i in range(len(self.terrain)):
+            for j in range(len(self.terrain[0])):
+                if self.distance(i, pos_center[0], j, pos_center[1]) <= perimeter:
+                    continue
+                

@@ -81,6 +81,20 @@ class Player:
                             self.mine[str(self.game_map.position_serial_to_UD(unite.position[0], unite.position[1]))] = self.game_map.position_serial_to_UD(v[0], v[1])
                             break
                     """
+                if unite.role == 1:
+                    # continuer déplacement
+                    moves = src.util.nextPositions(
+                        (unite.position[0], unite.position[1]),
+                        self.game_map,
+                        (unite.target[0], unite.target[1])
+                        , unite.pointMouvement
+                    )
+
+                    if len(moves) > 0:
+                        turn.deplacer_unite(unite.position, moves)
+                    else:
+                        unite.role = 0
+                        self.game_map.target[unite.target[0]][unite.target[1]] = False
 
                 # TODO PLUS TARD
                 # Il se déplace pour construire un amphi

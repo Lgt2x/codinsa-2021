@@ -161,15 +161,16 @@ class Carte:
             converted_position = position_UD_to_serial(summon[0])
             self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
             self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
-
+        print(f"data moved : {data['moved']}")
         for moved in data["moved"]:
-
+            start_pos = moved[0]
+            inter_pos = moved[1]
+            success = moved[-1]
             #Le déplacement a eu lieu
-            if(moved[-1]):
+            if(success):
                 #Recherche de l'unité au départ du mouvement
-                print("moved: ",moved[0])
-                posDepart = position_UD_to_serial(moved[0])
-                posArrivee = position_UD_to_serial(moved[-2])
+                posDepart = position_UD_to_serial(start_pos)
+                posArrivee = position_UD_to_serial(inter_pos[-1])
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
                 #Update la position stockée par l'objet :
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
@@ -235,7 +236,7 @@ class Carte:
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                     else:
                         #Création de l'unite
-                        self.unites[posConvert[0]][posConvert[1]] = dict_classes_batiment[infos[1]](appartenance=0, position=posConvert)
+                        self.unites[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
 
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                         self.listeUnites.append(self.unites[posConvert[0]][posConvert[1]])

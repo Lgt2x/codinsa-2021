@@ -76,7 +76,7 @@ for turn_number in range(10000):
         continue
 
     # On joue
-    turn_instance = Turn(game_map, turn_number)
+    turn_instance = Turn(game_map,turn_number)
     played = player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player)

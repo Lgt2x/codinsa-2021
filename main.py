@@ -9,7 +9,7 @@ password = ["g[B>!&I7C#V;-Y,OW%+/9A5", "ET1j]ZWe(JY)^A4_#@_1.h_J", "0%%IFIJ^&_Ac
 connexion.login("Lyon3", password[2])
 connexion.deleteGames()
 
-connexion.newGame('InactiveAI')
+connexion.newGame('RessourceAI')
 connexion.connect()
 turn1 = connexion.getMap()
 map = Carte(turn1)

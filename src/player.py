@@ -69,10 +69,10 @@ class Player:
                 if unite.role == 2:
                     # On mine
                     posRessource = src.util.miner(unite, self.game_map)
-                    print("POS RESSOURCE: ", posRessource)
-                    print("POS UNITE: ", unite.position)
+                    # print("POS RESSOURCE: ", posRessource)
+                    # print("POS UNITE: ", unite.position)
                     if len(posRessource) > 0:
-                        print("F")
+
                         turn.mine(unite.position, posRessource)
                     # else:
                     # unite.role=0

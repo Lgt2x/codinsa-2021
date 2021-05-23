@@ -111,3 +111,43 @@ def closestPath(unite, carte, x, y, compteurRec=0):
         print("Appel recursif")
         dest = closestPath(unite, carte, dest[0], dest[1],compteurRec+1)
     return dest
+
+def miner(unite,game_map):
+    if unite.identifiant == 'V':
+        #on check si les cases adjacentes a l'inge sont des ressources
+        voisins = game_map.adjacent(unite.position.x,unite.position.y)
+        for v in voisins:
+            if game_map.terrain[v[0],v[1]] == 3:
+                # On retourne la pos de la ressource
+                return v
+    #si pas de ressources ou mauvaise unite
+    return []
+
+def attaquerAdj(unite,game_map,target=None):
+
+    if target is None:
+        voisins = game_map.adjacent(unite.position.x,unite.position.y)
+        posTarget = None
+        vieTarget = 999
+        for v in voisins:
+            if game_map.unites[v[0]][v[1]] is not None and game_map.unites[v[0]][v[1]].appartenance == 0:
+                if vieTarget > game_map.unites[v[0]][v[1]].pv:
+                    vieTarget = game_map.unites[v[0]][v[1]].pv
+                    posTarget = v
+        if posTarget is not None:
+            return posTarget
+        for v in voisins:
+            if game_map.batiments[v[0]][v[1]] is not None and game_map.batiments[v[0]][v[1]].appartenance == 0:
+                if vieTarget > game_map.batiments[v[0]][v[1]].pv:
+                    vieTarget = game_map.batiments[v[0]][v[1]].pv
+                    posTarget = v
+        if posTarget is not None:
+            return posTarget
+
+    else:
+        if (game_map.unites[target[0]][target[1]] is not None and game_map.unites[target[0]][target[1]].appartenance == 0) or \
+            (game_map.batiments[target[0]][target[1]] is not None and game_map.batiments[target[0]][target[1]].appartenance != 1):
+            return target
+    return []
+
+

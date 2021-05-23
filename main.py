@@ -13,6 +13,7 @@ password = ["", "g[B>!&I7C#V;-Y,OW%+/9A5", "ET1j]ZWe(JY)^A4_#@_1.h_J", "0%%IFIJ^
 account = int(sys.argv[1])
 mode = sys.argv[2]
 
+from src.turn import Turn
 connexion = Connection()
 # connexion.login("Lyon3", password[3])
 connexion.login(f"Lyon{account}", password[account])
@@ -37,7 +38,8 @@ player = Player(map)
 
 if turn1["your_turn"]:
     print("On joue en premier")
-    turn = player.play()
+    turn_instance = Turn()
+    turn = player.play(turn_instance)
     connexion.sendTurn(turn)
 else:
     print("On joue en 2e")
@@ -74,9 +76,13 @@ for turn_number in range(10000):
         continue
 
     # On joue
-    played = player.play()
-    connexion.sendTurn(played)
+    turn_instance = Turn()
+    played = player.play(turn_instance)
+    connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player.game_map)
+
+    if turn_number > 10:
+        break
 
 connexion.deleteGames(connexion.game_id)
 logger.save_logs()

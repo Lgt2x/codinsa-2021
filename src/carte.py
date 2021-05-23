@@ -10,6 +10,11 @@ class Terrain(Enum):
     A = 2
     R = 3
 
+class Point:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
 
 dict_classes_batiment = {
     "S": batiment.Ecole,
@@ -123,8 +128,32 @@ class Carte:
 
     def convToDown(self, x, y):
         return x // 2, y, bool(x % 2)
+        
+    
+    def estVide(self,x,y):
+        return (self.batiments[x][y] == None and self.unites[x][y] == None)
+
+    #True si le terrain est F ou M et qu'il n'y a pas d'unité ou construction dessus
+    def estConstructible(self,x,y):
+        typeTerrain = self.terrain[x][y]
+        return (((typeTerrain == "M") or (typeTerrain == "F")) and self.estVide(x,y))
+
 
     def update(self, data):
+
+        #Création d'une nouvelle liste avec que les unités à nous
+        newListeUnites = []
+
+        for i in self.listeUnites:
+            if(i.appartenance == 1):
+                newListeUnites.append(i)
+            else: #Suppression de la map
+                pos = i.position
+                self.unites[pos[0]][pos[1]] = None
+            
+                
+        self.listeUnites = newListeUnites
+
         # update summoned
         for summon in data["summoned"]:
             if not summon[-1]:
@@ -132,18 +161,57 @@ class Carte:
             converted_position = position_UD_to_serial(summon[0])
             self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
             self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
-
+        print(f"data moved : {data['moved']}")
         for moved in data["moved"]:
-            if not moved[-1]:
-                continue
-
+            start_pos = moved[0]
+            inter_pos = moved[1]
+            success = moved[-1]
             #Le déplacement a eu lieu
-            if(moved[1]):
+            if(success):
                 #Recherche de l'unité au départ du mouvement
-                posDepart = position_UD_to_serial(moved[0][0])
-                posArrivee = position_UD_to_serial(moved[0][-1])
+                posDepart = position_UD_to_serial(start_pos)
+                posArrivee = position_UD_to_serial(inter_pos[-1])
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
+                #Update la position stockée par l'objet :
+                self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
                 self.unites[posDepart[0]][posDepart[1]] = None
+
+        #Attacked : Besoin pour les batiments adverses, pas les unites adv car elles sont maj par la vision
+        for attacked in data["attacked"]:
+            if(attacked[1]): #Détruit
+                #check s'il s'ajit d'un bâtiment
+                posDestroy = position_UD_to_serial(attacked[0])
+                if(self.batiments[posDestroy[0]][posDestroy[1]] != None): #Ce bâtiment est alors détruit
+                    self.listeBatiments.remove(self.batiments[posDestroy[0]][posDestroy[1]])
+                    self.batiments[posDestroy[0]][posDestroy[1]] = None
+        
+
+        #Built : Nécessaire car les batiments reçus seront à nous
+        #Format : coords du builder, coords du build, type, succes
+        for built in data["built"]:
+            if(built[-1]): #Ajout réussi
+                posConstruction = position_UD_to_serial(built[1])
+
+                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[built[2]](appartenance=1, position=posConstruction)
+                self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
+                
+        #Killed 
+        #Format : position, type (à vérifier)
+        for killed in data["killed"]:
+            posKilled = position_UD_to_serial(killed[0])
+            type = killed[1]
+            if(type == "V" or type == "L" or type == "H"): #Une de nous UNITES a été destroy
+                if(self.unites[posKilled[0]][posKilled[1]] == None):
+                    print("Erreur, on nous dit qu'on a kill une case vide")
+                else:
+                    self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
+                    self.unites[posKilled[0]][posKilled[1]] = None
+            else:
+                if(self.batiments[posKilled[0]][posKilled[1]] == None):
+                    print("Erreur, on nous dit qu'on a kill une case vide")
+                else:
+                    self.listeBatiments.remove(self.batiments[posKilled[0]][posKilled[1]])
+                    self.batiments[posKilled[0]][posKilled[1]] = None
 
         for (position, info) in data["visible"].items():
             #print(position, info)
@@ -154,6 +222,7 @@ class Carte:
             for i in range(len(posAConvert)):
                 posAConvert[i] = posAConvert[i].replace(" ","")
 
+            #Conversion en booléen
             posAConvert[2] = posAConvert[2]=="true"
             posConvert = position_UD_to_serial(posAConvert)
 
@@ -162,26 +231,27 @@ class Carte:
                 type = infos[1]
                 #Unite
                 if(type == "V" or type == "L" or type == "H"):
-                    if(self.batiments[posConvert[0]][posConvert[1]] != None and self.batiments[posConvert[0]][posConvert[1]].identifiant == type):
-                        #Update le batiment
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
-                    else:
-                        #Création du batiment
-                        self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
-
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
-                        self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
-                #Batiment
-                else:
-                    if(self.unites[posConvert[0]][posConvert[1]] != None and self.unites[posConvert[0]][posConvert[1]].identifiant == type):
+                    if(self.unites[posConvert[0]][posConvert[1]] != None):
                         #Update l'unite
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                     else:
                         #Création de l'unite
-                        self.unites[posConvert[0]][posConvert[1]] = dict_classes_batiment[infos[1]](appartenance=0, position=posConvert)
+                        self.unites[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
 
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                         self.listeUnites.append(self.unites[posConvert[0]][posConvert[1]])
+                #Batiment
+                else:
+                    if(self.batiments[posConvert[0]][posConvert[1]] != None):
+                        #Update le batiment
+                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                    else:
+                        #Création du batiment (il est forcément pas à nous)
+                        self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
+
+                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
+                    
 
 
     def convToDown(self, x, y):

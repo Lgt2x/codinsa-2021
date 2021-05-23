@@ -179,17 +179,7 @@ class Carte:
                     self.listeBatiments.remove(self.batiments[posDestroy[0]][posDestroy[1]])
                     self.batiments[posDestroy[0]][posDestroy[1]] = None
         
-
-        #Built : Nécessaire car les batiments reçus seront à nous
-        #Format : coords du builder, coords du build, type, succes
-        for built in data["built"]:
-            if(built[-1]): #Ajout réussi
-                posConstruction = position_UD_to_serial(built[1])
-
-                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[built[2]](appartenance=1, position=posConstruction)
-                self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
-                
-        #Killed 
+       #Killed 
         #Format : position, type (à vérifier)
         for killed in data["killed"]:
             posKilled = position_UD_to_serial(killed[0])
@@ -206,6 +196,17 @@ class Carte:
                 else:
                     self.listeBatiments.remove(self.batiments[posKilled[0]][posKilled[1]])
                     self.batiments[posKilled[0]][posKilled[1]] = None
+                     
+        #Built : Nécessaire car les batiments reçus seront à nous
+        #Format : coords du builder, coords du build, type, succes
+        for built in data["built"]:
+            if(built[-1]): #Ajout réussi
+                posConstruction = position_UD_to_serial(built[1])
+
+                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[built[2]](appartenance=1, position=posConstruction)
+                self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
+                
+        
 
         # update summoned
         for summon in data["summoned"]:

@@ -57,11 +57,13 @@ class Player:
 
         for unite in self.game_map.listeUnites:
             # Check si inge
+            print("position: ",unite.position)
             if unite.identifiant == "V" and unite.appartenance == 1:
 
                 # Si le déplacement est fini
-                if unite.role == 1 and unite.position == unite.target:
+                if unite.role == 1 and unite.position[0] == unite.target[0] and unite.position[1] == unite.target[1]:
                     # On l'assigne au minage
+                    print("MINER")
                     unite.role = 2
                     unite.target = None
 
@@ -69,6 +71,10 @@ class Player:
                 if unite.role == 2:
                     # On mine
                     posRessource = src.util.miner(unite, self.game_map)
+                    print("POS RESSOURCE: ",posRessource)
+                    print("POS UNITE: ", unite.position)
+
+                    # turn.mine(unite.position,posRessource)
 
                     """
                     voisins = self.game_map.adjacent(unite.position.x,unite.position.y)
@@ -113,7 +119,7 @@ class Player:
                     posLibreRessource = src.util.closestAvailableRessource(
                         unite, self.game_map
                     )
-                    print("PositionRessource: ", posLibreRessource)
+                    print("PositionLibreRessource: ", posLibreRessource)
                     unite.target = posLibreRessource
                     # on save que cette position est prise
                     self.game_map.target[posLibreRessource[0]][

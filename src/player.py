@@ -3,7 +3,7 @@ class Player:
     def __init__(self, game_map):
         self.game_map = game_map
     
-    def play(self):
+    def play(self, turn):
         print("asked for play.")
         move = {}
         attack = {}
@@ -16,6 +16,7 @@ class Player:
         for location, unit in summon.items():
             key = str(list(self.game_map.convToDown(*location))).lower()
             final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
+            turn.summon(location, unit)
         return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":final_summon}
 
     def ingenieurs(self,move,attack,mine,build):

@@ -85,6 +85,14 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
             else:
                 a.append(elem)
 
+    #pour eviter que les unites esayent de s'arreter sur des batiments
+    while len(a) > 0:
+
+        if carte.batiments[a[-1][0]][a[-1][1]] is not None:
+            a.pop(-1)
+        else :
+            break
+
     return a
 
 

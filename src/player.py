@@ -57,7 +57,6 @@ class Player:
 
         for unite in self.game_map.listeUnites:
             # Check si inge
-            print("position: ",unite.position)
             if unite.identifiant == "V" and unite.appartenance == 1:
 
                 # Si le déplacement est fini
@@ -65,7 +64,9 @@ class Player:
                     # On l'assigne au minage
                     print("MINER")
                     unite.role = 2
+                    self.game_map.target[unite.target[0]][unite.target[1]] = False
                     unite.target = None
+
 
                 # Si il est en train de miner
                 if unite.role == 2:
@@ -73,8 +74,11 @@ class Player:
                     posRessource = src.util.miner(unite, self.game_map)
                     print("POS RESSOURCE: ",posRessource)
                     print("POS UNITE: ", unite.position)
-
-                    # turn.mine(unite.position,posRessource)
+                    if len(posRessource)>0:
+                        print("F")
+                        turn.mine(unite.position,posRessource)
+                    # else:
+                        # unite.role=0
 
                     """
                     voisins = self.game_map.adjacent(unite.position.x,unite.position.y)
@@ -95,7 +99,11 @@ class Player:
                         , unite.pointMouvement
                     )
 
-                    turn.deplacer_unite(unite.position, moves)
+                    if len(moves )> 0:
+                        turn.deplacer_unite(unite.position, moves)
+                    else:
+                        unite.role = 0
+                        self.game_map.target[unite.target[0]][unite.target[1]]=False
 
 
                 # TODO PLUS TARD
@@ -132,7 +140,11 @@ class Player:
                         unite.target,
                         unite.pointMouvement,
                     )
-                    turn.deplacer_unite(unite.position,deplacementUnite)
+                    if len(deplacementUnite)>0:
+                        turn.deplacer_unite(unite.position,deplacementUnite)
+                    else:
+                        self.game_map.target[unite.target[0]][unite.target[1]] = False
+
                     # on passe au role "se deplacer vers ress"
                     unite.role = 1
 

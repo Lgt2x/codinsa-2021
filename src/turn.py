@@ -24,7 +24,7 @@ class Turn():
         return str(list(self.conv(pos)))
 
     def mine(self,pos_inge, pos_ressource):
-        self.d_mine[self.conv(pos_inge)] = [self.l_conv(pos_ressource)] # check double array
+        self.d_mine[self.conv(pos_inge)] = self.l_conv(pos_ressource)# check double array
 
     def summon(self,pos_summon, type_summon):
         self.d_summon[self.conv(pos_summon)] = type_summon # OK 

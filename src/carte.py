@@ -73,6 +73,7 @@ class Carte:
         self.batiments = [[None for _ in range(self.y)] for _ in range(self.x)]
         self.unites = [[None for _ in range(self.y)] for _ in range(self.x)]
         self.discovered = [[False for _ in range(self.y)] for _ in range(self.x)]
+        self.target = [[False for _ in range(self.y)] for _ in range(self.x)]
 
         self.listeBatiments = []
         self.listeUnites = []

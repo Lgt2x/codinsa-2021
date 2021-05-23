@@ -52,6 +52,8 @@ class Player:
         """
         détermine le comportement et les sorties des ingénieurs
         """
+
+
         caserne_construite = False
         for unite in self.game_map.listeUnites:
             # Check si inge
@@ -64,6 +66,30 @@ class Player:
                     unite.role = 2
                     self.game_map.target[unite.target[0]][unite.target[1]] = False
                     unite.target = None
+
+                # if unite.role == 4:
+                #     attaque = src.util.attaquerAdj(unite, self.game_map)
+                #     if attaque and len(attaque) != 0:
+                #
+                #         turn.attaquer_position(unite.position, attaque)
+                #     else:
+                #
+                #         # Se déplace vers le spawn ennemi
+                #         ennemy = src.util.ennemyFinder(unite.position, self.game_map)
+                #
+                #         if ennemy is not None:
+                #
+                #             adjEnn = src.util.closestPath(unite, self.game_map, ennemy[0], ennemy[1])
+                #             moves = src.util.nextPositions(
+                #                 unite.position,
+                #                 self.game_map,
+                #                 adjEnn
+                #                 , unite.pointMouvement
+                #             )
+                #
+                #             if len(moves) > 0:
+                #                 turn.deplacer_unite(unite.position, moves)
+
 
                 # Si il est en train de miner
                 if unite.role == 2:
@@ -177,19 +203,18 @@ class Player:
         for unite in self.game_map.listeUnites:
             # Check si PPA/Tank
             if unite.identifiant == "L" or unite.identifiant == "H":
-                print("PPPPPAAAAAA")
+
                 attaque = src.util.attaquerAdj(unite, self.game_map)
                 if attaque and len(attaque) != 0:
-                    print("A")
-                    print(unite.position, attaque)
+
                     turn.attaquer_position(unite.position, attaque)
                 else:
-                    print("B")
+
                     # Se déplace vers le spawn ennemi
                     ennemy = src.util.ennemyFinder(unite.position, self.game_map)
-                    print("Ennemy: ", ennemy, unite.position)
+
                     if ennemy is not None:
-                        print("C")
+
                         adjEnn = src.util.closestPath(unite,self.game_map,ennemy[0],ennemy[1])
                         moves = src.util.nextPositions(
                             unite.position,
@@ -197,9 +222,18 @@ class Player:
                             adjEnn
                             , unite.pointMouvement
                         )
-                        print("=" * 50, "\n", moves)
+
                         if len(moves) > 0:
                             turn.deplacer_unite(unite.position, moves)
+                        # else:
+                        #     if ennemy==self.game_map.spawnEnnemi:
+                        #         chemin = src.util.sansBlocage(unite,self.game_map,adjEnn)
+                        #         for case in chemin:
+                        #             if self.game_map.unite[case[0]][case[1]]:
+                        #                 unitB = self.game_map.unitB[case[0]][case[1]]
+                        #                 if unitB.appartenance and unitB.identifiant=='V' and unitB.type==2:
+                        #                     unitB.type=4
+                        #                     self.game_map.target[unitB.position[0]][unitB.position[1]]=True
 
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés

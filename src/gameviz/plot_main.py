@@ -6,7 +6,7 @@ import json
 import os
 import shutil
 from tqdm import tqdm
-source_file = "game_logs/summon_game.json"
+source_file = "game_logs/summon_game.json_2"
 target_dir = "summon_game"
 with open(source_file,'r') as file:
     data = json.load(file)

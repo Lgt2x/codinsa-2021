@@ -52,15 +52,15 @@ class Carte:
                         class_instantiate = dict_classes_batiment[split_tile[1]]
                         is_ours = False
                         if split_tile[1] == "S":
-                            # print("x:",i,",y:",j, ",spawn",spawn, ",convtodownspawn:",self.convToDown(spawn[0], spawn[1]))
+                            # #print("x:",i,",y:",j, ",spawn",spawn, ",convtodownspawn:",self.convToDown(spawn[0], spawn[1]))
                             # TODO appel orga
                             if i == spawn[0] and j == spawn[1]:
                                 is_ours = True
                             else:
                                 self.spawnEnnemi = [i,j]
-                            # print(is_ours," - x:",i,",y:",j, ",spawn",spawn, ",convtodownspawn:",self.convToDown(spawn[0], spawn[1]))
+                            # #print(is_ours," - x:",i,",y:",j, ",spawn",spawn, ",convtodownspawn:",self.convToDown(spawn[0], spawn[1]))
 
-                            # print(i,j, spawn, is_ours)
+                            # #print(i,j, spawn, is_ours)
                         self.batiments[i][j] = class_instantiate(appartenance = is_ours, position = [i,j])
                         self.listeBatiments.append(self.batiments[i][j])
 
@@ -69,11 +69,11 @@ class Carte:
                         self.unites[i][j] = class_instantiate(appartenance= 0, position = [i,j])
                         self.listeUnites.append(self.unites[i][j])
 
-        #print(self.spawnEnnemi)
+        ##print(self.spawnEnnemi)
 
     def __init__(self, data):
         raw_terrain = [b.split(" ") for b in data['map'].split("\n")][:-1]
-        # print("raw spawn",data["spawn"])
+        # #print("raw spawn",data["spawn"])
         self.spawn = position_UD_to_serial(data['spawn'])
 
         self.x = len(raw_terrain[0])
@@ -174,7 +174,7 @@ class Carte:
         self.listeUnites = newListeUnites
 
         
-        #print(f"data moved : {data['moved']}")
+        ##print(f"data moved : {data['moved']}")
         for moved in data["moved"]:
             start_pos = moved[0]
             inter_pos = moved[1]
@@ -184,7 +184,7 @@ class Carte:
                 #Recherche de l'unité au départ du mouvement
                 posDepart = position_UD_to_serial(start_pos)
                 posArrivee = position_UD_to_serial(inter_pos[-1])
-                print(moved)
+                #print(moved)
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
                 #Update la position stockée par l'objet :
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
@@ -206,7 +206,8 @@ class Carte:
             type = killed[1]
             if(type == "V" or type == "L" or type == "H"): #Une de nous UNITES a été destroy
                 if(self.unites[posKilled[0]][posKilled[1]] == None):
-                    print("Erreur, on nous dit qu'on a kill une case vide")
+                    pass
+                    #print("Erreur, on nous dit qu'on a kill une case vide")
                 else:
                     if(type=="V" and self.unites[posKilled[0]][posKilled[1]].role == 1): #Ingénieur tué
                         cordObj = self.unites[posKilled[0]][posKilled[1]].target
@@ -217,7 +218,8 @@ class Carte:
                     self.unites[posKilled[0]][posKilled[1]] = None
             else:
                 if(self.batiments[posKilled[0]][posKilled[1]] == None):
-                    print("Erreur, on nous dit qu'on a kill une case vide")
+                    pass
+                    #print("Erreur, on nous dit qu'on a kill une case vide")
                 else:
                     self.listeBatiments.remove(self.batiments[posKilled[0]][posKilled[1]])
                     self.batiments[posKilled[0]][posKilled[1]] = None
@@ -243,7 +245,7 @@ class Carte:
 
 
         for (position, info) in data["visible"].items():
-            #print(position, info)
+            ##print(position, info)
             infos = info.split(";")
 
             #Ils nous renvoient un string les filous
@@ -307,7 +309,7 @@ class Carte:
         for unite in self.listeUnites:
             if unite.identifiant == 'V':
                 count += 1
-        print("NbInge :",count)
+        #print("NbInge :",count)
         return count
 
     def nbRessources(self):
@@ -316,5 +318,5 @@ class Carte:
             for tile in ligne:
                 if tile == 'R':
                     count +=1
-        print("NbRess :",count)
+        #print("NbRess :",count)
         return count

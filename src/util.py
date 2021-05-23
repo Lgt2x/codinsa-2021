@@ -21,7 +21,7 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
 
         current = pQ.get()
 
-        # print("Current= ", current)
+        # #print("Current= ", current)
 
         if visited[current[1][0]][current[1][1]]:
             continue
@@ -60,13 +60,13 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
     if dist[arrivee[0]][arrivee[1]] == -1:
         return rep
     rep.append(arrivee)
-    # print("dist: ", dist)
-    # print("Pred: ", pred)
-    # print(rep)
-    # print("Autre: ", pred[rep[-1][0]][rep[-1][1]])
+    # #print("dist: ", dist)
+    # #print("Pred: ", pred)
+    # #print(rep)
+    # #print("Autre: ", pred[rep[-1][0]][rep[-1][1]])
     while list(pred[rep[-1][0]][rep[-1][1]]) != list(depart):
         rep.append(pred[rep[-1][0]][rep[-1][1]])
-    # print(rep)
+    # #print(rep)
     a = []
     pas = nbDeplacement
 
@@ -112,15 +112,15 @@ def ennemyFinder(depart, carte):
 
         current = pQ.get()
 
-        #print("Current= ", current)
+        ##print("Current= ", current)
 
         if visited[current[1][0]][current[1][1]]:
             continue
-        # print("UNITE======= ",carte.unites[current[1][0]][current[1][1]])
+        # #print("UNITE======= ",carte.unites[current[1][0]][current[1][1]])
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==0:
             return current[1]
         if carte.unites[current[1][0]][current[1][1]] is not None and carte.unites[current[1][0]][current[1][1]].appartenance==0:
-            # print("AAAAAAAAAAAAAA")
+            # #print("AAAAAAAAAAAAAA")
             return current[1]
         if carte.batiments[current[1][0]][current[1][1]] is not None and carte.batiments[current[1][0]][current[1][1]].appartenance==2:
 
@@ -155,7 +155,7 @@ def ennemyFinder(depart, carte):
                     pred[adj[0]][adj[1]] = current[1]
                     pQ.put((dist[adj[0]][adj[1]], adj))
 
-    # print(carte.spawnEnnemi , "="*20)
+    # #print(carte.spawnEnnemi , "="*20)
     return carte.spawnEnnemi
 
 def closestAvailableRessource(unite, carte):
@@ -167,11 +167,14 @@ def closestAvailableRessource(unite, carte):
     for x in range(carte.x):
         for y in range(carte.y):
             if carte.terrain[x][y] == 'R':
-                # print("Ressource trouve: ", x, y)
+                # #print("Ressource trouve: ", x, y)
 
                 for adj in carte.adjacent(x, y):
-                    # print("adj: ", adj)
+                    # #print("adj: ", adj)
                     if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
+                        if carte.target[adj[0]][adj[1]]:
+                            pass
+                            #print("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESST",carte.target)
                         if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None and not \
                                 carte.target[adj[0]][adj[1]]:
                             dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
@@ -189,7 +192,7 @@ def closestPath(unite, carte, x, y, compteurRec=0):
     minDist = math.inf
 
     for adj in carte.adjacent(x, y):
-        # print("adj: ", adj)
+        # #print("adj: ", adj)
         if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
             dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
             if dist < minDist:
@@ -198,7 +201,7 @@ def closestPath(unite, carte, x, y, compteurRec=0):
 
     if carte.batiments[dest[0]][dest[1]] is not None or carte.unites[dest[0]][dest[1]] is not None or \
             carte.target[dest[0]][dest[1]]:
-        # print("Appel recursif")
+        # #print("Appel recursif")
         dest = closestPath(unite, carte, dest[0], dest[1], compteurRec + 1)
     return dest
 

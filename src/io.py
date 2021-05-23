@@ -21,7 +21,7 @@ class Connection:
         with open('token', 'w') as f:
             f.write(self.token)
 
-        print(f"Connexion établie, token {self.token}")
+        #print(f"Connexion établie, token {self.token}")
 
     def newGame(self, type: str):
         res = requests.get(
@@ -33,7 +33,7 @@ class Connection:
         self.password = json.loads(res.text)["password"]
         self.port = json.loads(res.text)["port"]
 
-        print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
+        #print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
 
     def newGameMJ(self, salle: str):
         res = requests.get(
@@ -47,7 +47,7 @@ class Connection:
         with open('salle', 'w') as f:
             f.write(self.game_id)
 
-        print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
+        #print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
 
     def joinGame(self, salle: str):
         with open('salle', 'r') as f:
@@ -61,7 +61,7 @@ class Connection:
         self.password = json.loads(res.text)["password"]
         self.port = json.loads(res.text)["port"]
 
-        print(f"Rejoint la partie id {self.game_id}, pwd {self.password}, port {self.port}")
+        #print(f"Rejoint la partie id {self.game_id}, pwd {self.password}, port {self.port}")
 
     def current(self):
         resp = requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie': f'session={self.token}'})
@@ -72,12 +72,12 @@ class Connection:
 
         if game:
             requests.delete(f'http://codinsa.insa-rennes.fr/game/{game}', headers={'Cookie': f'session={self.token}'})
-            print(f"Deleted game {game}")
+            #print(f"Deleted game {game}")
         else:
             resp = requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie': f'session={self.token}'})
             games = json.loads(resp.text)['games']
 
-            print(f"Liste des parties en cours qui vont être supprimées: {games}")
+            #print(f"Liste des parties en cours qui vont être supprimées: {games}")
 
             for g in games:
                 requests.delete(f'http://codinsa.insa-rennes.fr/game/{g}', headers={'Cookie': f'session={self.token}'})
@@ -92,12 +92,12 @@ class Connection:
         """
         data = self.socket.recv(2048)
         data = data.decode()
-        print(data)
+        #print(data)
 
         while data[-2:] != "}\n":
             data2 = self.socket.recv(2048)
             data2 = data2.decode()
-            print(data2)
+            #print(data2)
             data += data2
 
         return json.loads(data)
@@ -106,14 +106,14 @@ class Connection:
         """
         Envoie le tour passé en argument au serveur
         """
-
+        #print(data)
         data['token'] = self.password
-        print(str(data).replace("'", '"'))
+        #print(str(data).replace("'", '"'))
         d = str(data).replace("'", '"') + "\n"
         self.socket.send(d.encode())
 
-        print("Tour envoyé")
-        print(data)
+        #print("Tour envoyé")
+        #print(data)
 
     def getTurn(self):
         """
@@ -127,7 +127,7 @@ class Connection:
             data2 = data2.decode()
             data += data2
 
-        print("Tour(s) reçu(s)")
-        print(data)
+        #print("Tour(s) reçu(s)")
+        #print(data)
 
         return data

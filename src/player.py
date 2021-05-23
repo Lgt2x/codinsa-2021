@@ -17,7 +17,7 @@ class Player:
 
     def play(self, turn):
 
-        print("Commence notre tour")
+        #print("Commence notre tour")
 
         self.move = {}
         self.attack = {}
@@ -62,7 +62,7 @@ class Player:
                 # Si le déplacement est fini
                 if unite.role == 1 and unite.position[0] == unite.target[0] and unite.position[1] == unite.target[1]:
                     # On l'assigne au minage
-                    # print("MINER")
+                    # #print("MINER")
                     unite.role = 2
                     self.game_map.target[unite.target[0]][unite.target[1]] = False
                     unite.target = None
@@ -71,8 +71,8 @@ class Player:
                 if unite.role == 2:
                     # On mine
                     posRessource = src.util.miner(unite, self.game_map)
-                    # print("POS RESSOURCE: ", posRessource)
-                    # print("POS UNITE: ", unite.position)
+                    # #print("POS RESSOURCE: ", posRessource)
+                    # #print("POS UNITE: ", unite.position)
                     if len(posRessource) > 0:
 
                         turn.mine(unite.position, posRessource)
@@ -115,7 +115,7 @@ class Player:
                 # Si il n'a pas de role
 
                 if unite.role == 0:
-                    # print("Position: ", unite.position)
+                    # #print("Position: ", unite.position)
 
                     # Si on a assez de gold, on crée une caserne pour former des PPA
                     seuils = [350,1000,1000]
@@ -150,7 +150,7 @@ class Player:
                     posLibreRessource = src.util.closestAvailableRessource(
                         unite, self.game_map
                     )
-                    # print("PositionLibreRessource: ", posLibreRessource)
+                    # #print("PositionLibreRessource: ", posLibreRessource)
                     unite.target = posLibreRessource
                     # on save que cette position est prise
                     self.game_map.target[posLibreRessource[0]][
@@ -182,33 +182,33 @@ class Player:
         t = time.time()
         for unite in self.game_map.listeUnites:
             print(time.time() - t)
-            if time.time() - t > 0.5:
-                print("timeout")
+            if time.time() - t > 4:
                 break
+
             # Check si PPA/Tank
             if (unite.identifiant == "L" or unite.identifiant == "H") and unite.appartenance:
-                # print("PPPPPAAAAAA")
+                # #print("PPPPPAAAAAA")
                 attaque = src.util.attaquerAdj(unite, self.game_map)
                 if attaque and len(attaque) != 0:
-                    # print("A")
-                    # print(unite.position, attaque)
+                    # #print("A")
+                    # #print(unite.position, attaque)
                     turn.attaquer_position(unite.position, attaque)
                 else:
-                    # print("B")
+                    # #print("B")
                     # Se déplace vers le spawn ennemi
                     ennemy = src.util.ennemyFinder(unite.position, self.game_map)
-                    # print("Ennemy: ", ennemy, unite.position)
+                    # #print("Ennemy: ", ennemy, unite.position)
                     if ennemy is not None:
-                        # print("C")
+                        # #print("C")
                         adjEnn = src.util.closestPath(unite,self.game_map,ennemy[0],ennemy[1])
-                        # print()
+                        # #print()
                         moves = src.util.nextPositions(
                             unite.position,
                             self.game_map,
                             adjEnn
                             , unite.pointMouvement
                         )
-                        # print("=" * 50, "\n", moves)
+                        # #print("=" * 50, "\n", moves)
                         if len(moves) > 0:
                             turn.deplacer_unite(unite.position, moves)
 

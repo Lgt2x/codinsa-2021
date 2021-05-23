@@ -15,17 +15,16 @@ mode = sys.argv[2]
 
 from src.turn import Turn
 connexion = Connection()
-# connexion.login("Lyon3", password[3])
 connexion.login(f"Lyon{account}", password[account])
 
 if mode == "ai":
-    print(f"Nouvelle partie AI avec l'IA {sys.argv[3]}")
+    #print(f"Nouvelle partie AI avec l'IA {sys.argv[3]}")
     connexion.newGame(sys.argv[3])
 elif mode == "pvp_create":
-    print(f"Nouvelle partie PVP salle {sys.argv[3]}")
+    #print(f"Nouvelle partie PVP salle {sys.argv[3]}")
     connexion.newGameMJ(sys.argv[3])
 elif mode == "pvp_join":
-    print(f"Rejoint la salle PVP {sys.argv[3]}")
+    #print(f"Rejoint la salle PVP {sys.argv[3]}")
     connexion.joinGame(sys.argv[3])
 
 
@@ -38,12 +37,11 @@ logger = GameLogger("game_logs/summon_game.json", account = account)
 player = Player(game_map)
 
 if turn1["your_turn"]:
-    print("On joue en premier")
+    #print("On joue en premier")
     turn_instance = Turn(game_map, 0)
     player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
-else:
-    print("On joue en 2e")
+    #print("On joue en 2e")
 
 for turn_number in range(10000):
     print(f"Tour #{turn_number}")
@@ -55,16 +53,11 @@ for turn_number in range(10000):
     # Si on reçoit plusieurs tours, on les traite 1 par 1
     for d in data:
         # if "errors" in d:
-        #     print("Erreurs !")
-        #     print(d["errors"])
+            #print("Erreurs !")
+            #print(d["errors"])
 
         # La partie est terminée
         if "your_turn" not in d:
-            print("Fin de la partie")
-            if d["AIsWinner"] == True:
-                print("A a gagné")
-            else:
-                print("A a perdu")
             break
 
         player.update(d)
@@ -82,7 +75,7 @@ for turn_number in range(10000):
     turn_instance = Turn(game_map,turn_number)
     player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
-    logger.log_gamestate(player)
+    #logger.log_gamestate(player)
 
 connexion.deleteGames(connexion.game_id)
 logger.save_logs()

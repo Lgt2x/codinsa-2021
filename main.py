@@ -9,7 +9,7 @@ password = ["g[B>!&I7C#V;-Y,OW%+/9A5", "ET1j]ZWe(JY)^A4_#@_1.h_J", "0%%IFIJ^&_Ac
 connexion.login("Lyon3", password[2])
 connexion.deleteGames()
 
-connexion.newGame('RessourceAI')
+connexion.newGame('InactiveAI')
 connexion.connect()
 turn1 = connexion.getMap()
 map = Carte(turn1)
@@ -46,6 +46,7 @@ for turn_number in range(1001):
     played = player.play()
     connexion.sendTurn(played)
     logger.log_gamestate(player.game_map)
+
     if turn_number > 20:
         break
 connexion.deleteGames(connexion.game_id)

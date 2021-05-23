@@ -57,6 +57,28 @@ class Player:
         pass
 
     def compute_all_summonings(self,dict_summons):
+        for i in self.game_map.listeBatiments:
+            if(i.appartenance):
+                if(i.identifiant=='S'):
+                    voisins = self.game_map.adjacent(i.position[0],i.position[1])
+                    for v in voisins:
+                        if(v!=None):
+                            if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == "F" or self.game_map.terrain[v[0]][v[1]] == "M")): #Case vide
+                                dict_summons[tuple(v)] = "V"
+                                break
+                if(i.identifiant=='C'):
+                    voisins = self.game_map.adjacent(i.position[0],i.position[1])       
+                    for v in voisins:
+                        if(v!=None):
+                            if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == 0 or self.game_map.terrain[v[0]][v[1]] == 1)): #Case vide
+                                dict_summons[tuple(v)] = "L"
+                                break
+            
+        
+    
+
+
+        """
         for i in range(len(self.game_map.batiments)):
             for j in range(len(self.game_map.batiments[0])):
                 if self.game_map.batiments[i][j] == None:
@@ -77,6 +99,7 @@ class Player:
                             if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == 0 or self.game_map.terrain[v[0]][v[1]] == 1)): #Case vide
                                 dict_summons[tuple(v)] = "L"
                                 break
+            """
     
     def update(self, data):
         self.game_map.update(data)

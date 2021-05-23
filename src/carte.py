@@ -174,10 +174,14 @@ class Carte:
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
                 self.unites[posDepart[0]][posDepart[1]] = None
 
-        #Attacked : Besoin pour les batiments
+        #Attacked : Besoin pour les batiments adverses, pas les unites adv car elles sont maj par la vision
         for attacked in data["attacked"]:
             if(attacked[1]): #Détruit
-                pass
+                #check s'il s'ajit d'un bâtiment
+                posDestroy = position_UD_to_serial(attacked[0])
+                if(self.batiments[posDestroy[0]][posDestroy[1]] != None): #Ce bâtiment est alors détruit
+                    self.listeBatiments.remove(self.batiments[posDestroy[0]][posDestroy[1]])
+                    self.batiments[posDestroy[0]][posDestroy[1]] = None
         
 
         #Built : Nécessaire car les batiments reçus seront à nous
@@ -246,12 +250,6 @@ class Carte:
                         self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
                     
 
-
-                        
-
-        for i in self.listeUnites:
-            print(i.position)
-            print(i.appartenance)
 
     def convToDown(self, x, y):
         return x // 2, y, x % 2

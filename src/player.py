@@ -6,6 +6,8 @@ import src.turn
 
 seuilPPA = 80
 seuilTank = 1000
+seuilCaserne1 = 350
+seuilCaserne2 = 600
 
 
 class Player:
@@ -116,7 +118,7 @@ class Player:
                     print("Position: ", unite.position)
 
                     # Si on a assez de gold, on crée une caserne pour former des PPA
-                    if self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0 and not caserne_construite:
+                    if ((self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0) or (self.game_map.balance > seuilCaserne2 and self.game_map.nombreCasernes() == 1)) and not caserne_construite:
                         # Ordre de construction de la caserne a cote du larbin
                         voisins = self.game_map.adjacent(*unite.position)
 
@@ -228,6 +230,7 @@ class Player:
                         turn.summon(v, "L")
                         money -= 30
                     elif (money > seuilTank):
+                        turn.summon(v, "H")
                         money -= 100
 
     def update(self, data):

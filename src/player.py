@@ -11,6 +11,7 @@ class Player:
         build = {}
         summon = {}
         self.compute_all_summonings(summon)
+
         final_summon = {}
         for location, unit in summon.items():
             key = str(list(self.game_map.convToDown(*location))).lower()

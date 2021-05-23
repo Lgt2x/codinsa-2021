@@ -84,7 +84,7 @@ def closestAvailableRessource(unite, carte):
                 for adj in carte.adjacent(x, y):
                     # print("adj: ", adj)
                     if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
-                        if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None:
+                        if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None and not carte.target[adj[0]][adj[1]]:
                             dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
                             if dist < minDist:
                                 minDist = dist
@@ -107,7 +107,7 @@ def closestPath(unite, carte, x, y, compteurRec=0):
                 minDist = dist
                 dest = adj
 
-    if carte.batiments[dest[0]][dest[1]] is not None or carte.unites[dest[0]][dest[1]] is not None:
+    if carte.batiments[dest[0]][dest[1]] is not None or carte.unites[dest[0]][dest[1]] is not None or carte.target[dest[0]][dest[1]]:
         print("Appel recursif")
         dest = closestPath(unite, carte, dest[0], dest[1],compteurRec+1)
     return dest

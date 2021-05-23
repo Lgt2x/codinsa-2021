@@ -124,6 +124,21 @@ class Carte:
         return x // 2, y, bool(x % 2)
 
     def update(self, data):
+
+        #Création d'une nouvelle liste avec que les unités à nous
+        newListeUnites = []
+
+        for i in self.listeUnites:
+            if(i.appartenance == 1):
+                newListeUnites.append(i)
+            else: #Suppression de la map
+                pos = i.position
+                self.unites[pos[0]][pos[1]] = None
+            
+                
+        self.listeUnites = newListeUnites
+
+
         # update summoned
         for summon in data["summoned"]:
             if not summon[-1]:
@@ -132,9 +147,10 @@ class Carte:
             self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
             self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
 
+
         for moved in data["moved"]:
-            if not moved[-1]:
-                continue
+            
+            converted_position 
 
             #Le déplacement a eu lieu
             if(moved[1]):
@@ -142,7 +158,30 @@ class Carte:
                 posDepart = position_UD_to_serial(moved[0][0])
                 posArrivee = position_UD_to_serial(moved[0][-1])
                 self.unites[posArrivee[0]][posArrivee[1]] = self.unites[posDepart[0]][posDepart[1]]
+                #Update la position stockée par l'objet :
+                self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
                 self.unites[posDepart[0]][posDepart[1]] = None
+
+        #Attacked : pas besoin les hp sont actualisés
+
+        #Built : Nécessaire car les batiments reçus seront à nous
+        #Format : coords du builder, coords du build, type, succes
+        for built in data["built"]:
+            if(built[-1]): #Ajout réussi
+                posConstruction = position_UD_to_serial(built[1])
+                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[summon[2]](appartenance=1, position=posConstruction)
+                self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
+                
+        #Killed : nécessaire car nos unités ne sont pas reset à chaque fois.
+        #Format : position, type (à vérifier)
+        for killed in data["killed"]:
+            posKilled = position_UD_to_serial(killed[0])
+
+            if(self.unites[posKilled[0]][posKilled[1]] == None):
+                print("Erreur, on nous dit qu'on a kill une case vide")
+            else:
+                self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
+                self.unites[posKilled[0]][posKilled[1]] = None
 
         for (position, info) in data["visible"].items():
             #print(position, info)
@@ -153,6 +192,7 @@ class Carte:
             for i in range(len(posAConvert)):
                 posAConvert[i] = posAConvert[i].replace(" ","")
 
+            #Conversion en booléen
             posAConvert[2] = posAConvert[2]=="true"
             posConvert = position_UD_to_serial(posAConvert)
 
@@ -165,7 +205,7 @@ class Carte:
                         #Update le batiment
                         self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
                     else:
-                        #Création du batiment
+                        #Création du batiment (il est forcément pas à nous)
                         self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
 
                         self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
@@ -181,6 +221,7 @@ class Carte:
 
                         self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
                         self.listeUnites.append(self.unites[posConvert[0]][posConvert[1]])
+
 
 
     def convToDown(self, x, y):

@@ -34,14 +34,14 @@ turn1 = connexion.getMap()
 
 game_map = Carte(turn1)
 
-logger = GameLogger("game_logs/summon_game.json")
+logger = GameLogger("game_logs/summon_game.json", account = account)
 player = Player(game_map)
 
 if turn1["your_turn"]:
     print("On joue en premier")
-    turn_instance = Turn(game_map, turn_number)
-    turn = player.play(turn_instance)
-    connexion.sendTurn(turn)
+    turn_instance = Turn(game_map, 0)
+    player.play(turn_instance)
+    connexion.sendTurn(turn_instance.get_json_turn())
 else:
     print("On joue en 2e")
 
@@ -80,12 +80,9 @@ for turn_number in range(10000):
 
     # On joue
     turn_instance = Turn(game_map,turn_number)
-    played = player.play(turn_instance)
+    player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
     logger.log_gamestate(player)
-
-    if turn_number >150:
-        break
 
 connexion.deleteGames(connexion.game_id)
 logger.save_logs()

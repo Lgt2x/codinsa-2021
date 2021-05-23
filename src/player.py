@@ -100,7 +100,7 @@ class Player:
                         turn.deplacer_unite(unite.position, moves)
                     else:
                         unite.role = 0
-                        self.game_map.target[unite.target[0]][unite.target[1]] = False
+                        #self.game_map.target[unite.target[0]][unite.target[1]] = False
 
                 # TODO PLUS TARD
                 # Il se déplace pour construire un amphi
@@ -165,11 +165,13 @@ class Player:
                     )
                     if len(deplacementUnite) > 0:
                         turn.deplacer_unite(unite.position, deplacementUnite)
-                    else:
-                        self.game_map.target[unite.target[0]][unite.target[1]] = False
+                        unite.role = 1
+                    #else:
+                        #self.game_map.target[unite.target[0]][unite.target[1]] = False
+
 
                     # on passe au role "se deplacer vers ress"
-                    unite.role = 1
+                    #unite.role = 1
 
                     # affecter a role 1 et trouver la ressource libre la plus proche
 

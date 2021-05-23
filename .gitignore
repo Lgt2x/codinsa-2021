@@ -7,3 +7,4 @@ game_logs/*
 venv/*
 src/__pycache__/*
 token
+salle

@@ -8,6 +8,7 @@ seuilPPA = 80
 seuilTank = 1000
 seuilCaserne1 = 350
 seuilCaserne2 = 600
+seuilTourelle = 500
 
 
 class Player:
@@ -27,7 +28,6 @@ class Player:
 
         # On joue avec les ingés
         self.ingenieurs(turn)
-
         # On joue avec les PPA
         self.PPA(turn)
 
@@ -50,11 +50,52 @@ class Player:
         #                 turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
 
+    #Définit la meilleure positition possible pour une tourelle, c'est à dire la plus proche du spawn adverse sans être à 1
+    def positionTourelle(self):
+
+        dMin = 9999999999
+        #Recherche du batiment le + proche du spawn ennemi
+
+        for b in self.game_map.listeBatiments:
+            if b.appartenance == 1:
+                dist = self.game_map.distance(b.position[0],b.position[1],self.game_map.spawnEnnemi[0],self.game_map.spawnEnnemi[1])
+                if(dist<dMin):
+                    dMin = dist
+                    batMin = [b.position[0],b.position[1]]
+
+
+        #Récupération des cases à un rayon de 2 et 3 du batiment le plus proche
+        voisins = self.game_map.adjacent(*batMin)
+        for v in voisins:
+            v_v = self.game_map.adjacent(*v)
+
+        for v in v_v:
+            vvv = self.game_map.adjacent(*v)
+
+        totalCandidats = v_v + vvv
+
+        #Recherche de la position de la nouvelle tourelle au + près du spawn ennemi et constructible
+        dMin = 9999999999
+        for b in totalCandidats:
+            dist = self.game_map.distance(b[0],b[1],self.game_map.spawnEnnemi[0],self.game_map.spawnEnnemi[1])
+            if(dist<dMin and dist>1 and self.game_map.estConstructible(*b)):
+                dMin = dist
+                caseMin = [b[0],b[1]]
+
+        
+
+        return(caseMin)
+
+
+
     def ingenieurs(self, turn):
         """
         détermine le comportement et les sorties des ingénieurs
         """
         caserne_construite = False
+        nbTourelleur = 0
+
+        self.positionTourelle()
         for unite in self.game_map.listeUnites:
             # Check si inge
             if unite.identifiant == "V" and unite.appartenance == 1:
@@ -116,6 +157,12 @@ class Player:
 
                 if unite.role == 0:
                     # print("Position: ", unite.position)
+
+                    #Affectation d'un unique ingé au role de tourelleur
+                    if(nbTourelleur == 0 and self.game_map.balance>seuilTourelle):
+                        unite.role = 4
+                        break
+                
 
                     # Si on a assez de gold, on crée une caserne pour former des PPA
                     if ((self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0) or (self.game_map.balance > seuilCaserne2 and self.game_map.nombreCasernes() == 1)) and not caserne_construite:

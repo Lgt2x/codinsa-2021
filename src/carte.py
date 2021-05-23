@@ -250,23 +250,23 @@ class Carte:
                 if(type == "V" or type == "L" or type == "H"):
                     if(self.unites[posConvert[0]][posConvert[1]] != None):
                         #Update l'unite
-                        self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.unites[posConvert[0]][posConvert[1]].pv = int(infos[2])
                     else:
                         #Création de l'unite
                         self.unites[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
 
-                        self.unites[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.unites[posConvert[0]][posConvert[1]].pv = int(infos[2])
                         self.listeUnites.append(self.unites[posConvert[0]][posConvert[1]])
                 #Batiment
                 else:
                     if(self.batiments[posConvert[0]][posConvert[1]] != None):
                         #Update le batiment
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.batiments[posConvert[0]][posConvert[1]].pv = int(infos[2])
                     else:
                         #Création du batiment (il est forcément pas à nous)
                         self.batiments[posConvert[0]][posConvert[1]] = dict_classes_unites[infos[1]](appartenance=0, position=posConvert)
 
-                        self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
+                        self.batiments[posConvert[0]][posConvert[1]].pv = int(infos[2])
                         self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
               
 

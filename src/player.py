@@ -18,7 +18,7 @@ class Player:
         self.mine = {}
         self.build = {}
         self.summon = {}
-        
+
         # On joue avec les ingés
         self.ingenieurs(turn)
 
@@ -61,18 +61,17 @@ class Player:
                     self.game_map.target[unite.target[0]][unite.target[1]] = False
                     unite.target = None
 
-
                 # Si il est en train de miner
                 if unite.role == 2:
                     # On mine
                     posRessource = src.util.miner(unite, self.game_map)
-                    print("POS RESSOURCE: ",posRessource)
+                    print("POS RESSOURCE: ", posRessource)
                     print("POS UNITE: ", unite.position)
-                    if len(posRessource)>0:
+                    if len(posRessource) > 0:
                         print("F")
-                        turn.mine(unite.position,posRessource)
+                        turn.mine(unite.position, posRessource)
                     # else:
-                        # unite.role=0
+                    # unite.role=0
 
                     """
                     voisins = self.game_map.adjacent(unite.position.x,unite.position.y)
@@ -83,28 +82,10 @@ class Player:
                             break
                     """
 
-                # Si il se déplace vers la ressource
-                if unite.role == 1:
-                    # continuer déplacement
-                    moves = src.util.nextPositions(
-                        (unite.position[0], unite.position[1]),
-                        self.game_map,
-                        (unite.target[0], unite.target[1])
-                        , unite.pointMouvement
-                    )
-
-                    if len(moves )> 0:
-                        turn.deplacer_unite(unite.position, moves)
-                    else:
-                        unite.role = 0
-                        self.game_map.target[unite.target[0]][unite.target[1]]=False
-
-
                 # TODO PLUS TARD
                 # Il se déplace pour construire un amphi
                 if unite.role == 3:
                     pass
-
 
                 # si sur case target
                 # construire
@@ -114,35 +95,34 @@ class Player:
                 # Si il n'a pas de role
 
                 if unite.role == 0:
-                    print("Position: ",unite.position)
+                    print("Position: ", unite.position)
 
                     # Si on a assez de gold, on crée une caserne pour former des PPA
                     if self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0 and not caserne_construite:
-                        #Ordre de construction de la caserne a cote du larbin
+                        # Ordre de construction de la caserne a cote du larbin
                         voisins = self.game_map.adjacent(*unite.position)
+
                         # ne garder que les voisins qui peuvent rellement être construits
                         def compute_min_distance_others(case, batiments):
                             mini = float('inf')
                             for b in batiments:
                                 mini = min(mini, self.game_map.distance(case[0], b.position[0], case[1], b.position[1]))
                             return mini
-                        
+
                         my_batiments = [x for x in self.game_map.listeBatiments if x.appartenance]
                         minis = [compute_min_distance_others(x, my_batiments) for x in voisins]
                         voisins_ok = []
                         for it_voisin in range(len(voisins)):
-                            if minis[it_voisin] >=2 and minis[it_voisin] <=4:
+                            if minis[it_voisin] >= 2 and minis[it_voisin] <= 4:
                                 voisins_ok.append(voisins[it_voisin])
                         for v in voisins:
                             # list constructibles around
                             v_v = self.game_map.adjacent(*v)
                             cpt_ok = sum([self.game_map.estConstructible(*x) for x in v_v])
-                            if self.game_map.estConstructible(*v) and cpt_ok >=2:
+                            if self.game_map.estConstructible(*v) and cpt_ok >= 2:
                                 turn.build(unite.position, v, "C")
                                 caserne_construite = True
                                 break
-
-
 
                     # Trouve la ressource libre la plus proche
                     posLibreRessource = src.util.closestAvailableRessource(
@@ -161,8 +141,8 @@ class Player:
                         unite.target,
                         unite.pointMouvement,
                     )
-                    if len(deplacementUnite)>0:
-                        turn.deplacer_unite(unite.position,deplacementUnite)
+                    if len(deplacementUnite) > 0:
+                        turn.deplacer_unite(unite.position, deplacementUnite)
                     else:
                         self.game_map.target[unite.target[0]][unite.target[1]] = False
 
@@ -179,19 +159,21 @@ class Player:
         for unite in self.game_map.listeUnites:
             # Check si PPA/Tank
             if unite.identifiant == "L" or unite.identifiant == "H":
-                if unite.target:
-
-                    # Se déplace vers le spawn ennemi
-                    moves = src.util.nextPositions(
-                        (unite.position[0], unite.position[1]),
-                        self.game_map,
-                        (unite.target[0], unite.target[1])
-                        , unite.pointMouvement
-                    )
-
-                    turn.deplacer_unite(unite.position, moves)
+                attaque = src.util.attaquerAdj(unite, self.game_map)
+                if attaque:
+                    turn.attaquer_position(unite.position, attaque)
                 else:
-                    pass
+                    # Se déplace vers le spawn ennemi
+                    ennemy = src.util.ennemyFinder(unite.position, self.game_map)
+                    if ennemy:
+                        moves = src.util.nextPositions(
+                            (unite.position[0], unite.position[1]),
+                            self.game_map,
+                            ennemy
+                            , unite.pointMouvement
+                        )
+                    if len(moves) > 0:
+                        turn.deplacer_unite(unite.position, moves)
 
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
@@ -212,15 +194,11 @@ class Player:
                             turn.summon(v,"V")
                             nbInge+=1
 
-        #Spawn PPA
-        
-                        
-                        
-                    
-
     def update(self, data):
         self.game_map.update(data)
 
+
+"""
     def play_defense(self, turn):
         def dToSpawn(position):
             return self.game_map.distance(position[0], self.game_map.spawn[0], position[1], self.game_map.spawn[1])
@@ -294,4 +272,4 @@ class Player:
                     turn.move(my_unit.position, moves)
                     positions_futur_taken.append(moves[-1])
                     my_unit.moved = True
-            
+            """

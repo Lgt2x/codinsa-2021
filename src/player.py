@@ -208,14 +208,20 @@ class Player:
         optimum_amphi = 2
         opponents_perimeter = [x for x in self.game_map.listeUnites if x.appartenance==0 and dToSpawn(x.position) <= PERIMETER_DANGER]
         unites_perimeter = [x for x in self.game_map.listeUnites if x.appartenance==1 and dToSpawn(x.position) <= PERIMETER_DANGER]
-        
+        positions_futur_taken = []
+
         batiments_perimeter = [x for x in self.game_map.listeBatiments if x.appartenance==1 and dToSpawn(x.position) <= PERIMETER_DANGER]
         if(len(opponents_perimeter)) == 0: # no enemy nearby
             camps = [x for x in batiments_perimeter if x.identifiant == "C"]
             tours = [x for x in batiments_perimeter if x.identifiant == "T"]
             if len(camps) < optimum_amphi:
-                # build camp
-                pass
+                for unite in unites_perimeter:
+                    if unite.identifiant == "V":
+                        unite.role = 0
+                        if unite.target != None:
+                            self.game_map.target[unite.target[0]][unite.target[1]] = False
+                            unite.target = None
+                self.ingenieurs()
             else:
                 
                 # build tower
@@ -243,6 +249,7 @@ class Player:
                     all_pos_formations = sorted(all_pos_formations, key = lambda x: dToSpawn(x))
 
                     turn.spawn(all_pos_formations[0], "L")
+                    positions_futur_taken.append(all_pos_formations[0])
                     cpt_forme +=1
                     all_pos_formations = all_pos_formations[1:]
                     distances_positions_unites[0][1] += 1 # faire comme si il s eloignait pour voir les autres menaces
@@ -253,5 +260,17 @@ class Player:
                 for opp_unit in opponents_perimeter:
                     if self.game_map.distance(my_unit.position[0], opp_unit.position[0], my_unit.position[1], opp_unit.position[1]) == 1:
                         turn.attaquer_position(my_unit.position, opp_unit.position)
+                        opp_unit.targeted = True
+                        my_unit.moved = True
                 # in case of equality : d'abord si on peut achever quelqu'un, ensuite au plus proche
-            # sinon, se rapprocher de la base 
+            for my_unit in unites_perimeter:
+                opp_targets = [x for x in opponents_perimeter if x.targeted]
+                opp_targets = sorted(opp_targets, key = lambda x: self.game_map.distance(x.position[0], my_unit.position[0], x.position[1], my_unit.position[1]))
+                target_case = closestPath(my_unit, self.game_map, opp_targets[0].position[0], opp_targets.position[1])
+                moves = nextPositions(my_unit.position, self.game_map, target_case, my_unit.pointMouvement)
+                
+                if len(moves) != 0 and tuple(moves[-1]) not in [tuple(x) for x in positions_futur_taken]:
+                    turn.move(my_unit.position, moves)
+                    positions_futur_taken.append(moves[-1])
+                    my_unit.moved = True
+            

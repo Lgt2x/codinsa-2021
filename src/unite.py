@@ -2,7 +2,8 @@ class Unite:
     def __init__(self, appartenance, position):
         self.appartenance = appartenance
         self.position = position
-
+        self.moved = False
+        self.targetted = False
 
 class Ingenieur(Unite):
     """ Roles : 0 : non affecté

@@ -150,26 +150,27 @@ class Player:
                     posLibreRessource = src.util.closestAvailableRessource(
                         unite, self.game_map
                     )
-                    # print("PositionLibreRessource: ", posLibreRessource)
-                    unite.target = posLibreRessource
-                    # on save que cette position est prise
-                    self.game_map.target[posLibreRessource[0]][
-                        posLibreRessource[1]
-                    ] = True
-                    # on deplace
-                    deplacementUnite = src.util.nextPositions(
-                        unite.position,
-                        self.game_map,
-                        unite.target,
-                        unite.pointMouvement,
-                    )
-                    if len(deplacementUnite) > 0:
-                        turn.deplacer_unite(unite.position, deplacementUnite)
-                    else:
-                        self.game_map.target[unite.target[0]][unite.target[1]] = False
+                    print("PositionLibreRessource: ", posLibreRessource)
+                    if unite.position!=posLibreRessource:
+                        unite.target = posLibreRessource
+                        # on save que cette position est prise
+                        self.game_map.target[posLibreRessource[0]][
+                            posLibreRessource[1]
+                        ] = True
+                        # on deplace
+                        deplacementUnite = src.util.nextPositions(
+                            unite.position,
+                            self.game_map,
+                            unite.target,
+                            unite.pointMouvement,
+                        )
+                        if len(deplacementUnite) > 0:
+                            turn.deplacer_unite(unite.position, deplacementUnite)
+                        else:
+                            self.game_map.target[unite.target[0]][unite.target[1]] = False
 
-                    # on passe au role "se deplacer vers ress"
-                    unite.role = 1
+                        # on passe au role "se deplacer vers ress"
+                        unite.role = 1
 
                     # affecter a role 1 et trouver la ressource libre la plus proche
 

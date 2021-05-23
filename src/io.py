@@ -15,7 +15,8 @@ class Connection:
             data=json.dumps({"username": username, "password": password}),
             headers={"Content-Type": "application/json"},
         )
-        self.token = resp.headers["Set-Cookie"].split(";")[0].split("=")[1]
+
+        self.token = resp.cookies.get("session")
 
         with open('token', 'w') as f:
             f.write(self.token)
@@ -27,11 +28,40 @@ class Connection:
             f"http://codinsa.insa-rennes.fr/game/new?ai={type}",
             headers={"Cookie": f"session={self.token}"},
         )
+
         self.game_id = json.loads(res.text)["game_id"]
         self.password = json.loads(res.text)["password"]
         self.port = json.loads(res.text)["port"]
 
         print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
+
+    def newGameMJ(self, salle: str):
+        res = requests.get(
+            f"http://codinsa.insa-rennes.fr/game/new?multiplayer=true&privkey={salle}",
+            headers={"Cookie": f"session={self.token}"},
+        )
+        self.game_id = json.loads(res.text)["game_id"]
+        self.password = json.loads(res.text)["password"]
+        self.port = json.loads(res.text)["port"]
+
+        with open('salle', 'w') as f:
+            f.write(self.game_id)
+
+        print(f"Rejoint la nouvelle partie id {self.game_id}, pwd {self.password}, port {self.port}")
+
+    def joinGame(self, salle: str):
+        with open('salle', 'r') as f:
+            self.game_id = f.readline()
+
+        res = requests.get(
+            f"http://codinsa.insa-rennes.fr/game/{self.game_id}?privkey={salle}",
+            headers={"Cookie": f"session={self.token}"})
+
+        self.game_id = json.loads(res.text)["game_id"]
+        self.password = json.loads(res.text)["password"]
+        self.port = json.loads(res.text)["port"]
+
+        print(f"Rejoint la partie id {self.game_id}, pwd {self.password}, port {self.port}")
 
     def current(self):
         resp = requests.get('http://codinsa.insa-rennes.fr/current', headers={'Cookie': f'session={self.token}'})
@@ -64,7 +94,7 @@ class Connection:
         data = data.decode()
         print(data)
 
-        while data[-2] != "}":
+        while data[-2:] != "}\n":
             data2 = self.socket.recv(2048)
             data2 = data2.decode()
             print(data2)
@@ -92,16 +122,12 @@ class Connection:
 
         data = self.socket.recv(1024).decode()
 
-        while data[-2] != "}":
+        while data[-2:] != "}\n":
             data2 = self.socket.recv(1024)
             data2 = data2.decode()
             data += data2
 
-        print("Tour reçu")
+        print("Tour(s) reçu(s)")
         print(data)
-        parsed = json.loads(data)
 
-        if "errors" in parsed:
-            print(parsed["errors"])
-
-        return parsed
+        return data

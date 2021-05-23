@@ -140,7 +140,6 @@ class Carte:
 
 
     def update(self, data):
-
         #Création d'une nouvelle liste avec que les unités à nous
         newListeUnites = []
 
@@ -154,14 +153,8 @@ class Carte:
                 
         self.listeUnites = newListeUnites
 
-        # update summoned
-        for summon in data["summoned"]:
-            if not summon[-1]:
-                continue  # skip, there was a fail
-            converted_position = position_UD_to_serial(summon[0])
-            self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
-            self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
-        print(f"data moved : {data['moved']}")
+        
+        #print(f"data moved : {data['moved']}")
         for moved in data["moved"]:
             start_pos = moved[0]
             inter_pos = moved[1]
@@ -213,6 +206,15 @@ class Carte:
                     self.listeBatiments.remove(self.batiments[posKilled[0]][posKilled[1]])
                     self.batiments[posKilled[0]][posKilled[1]] = None
 
+        # update summoned
+        for summon in data["summoned"]:
+            if not summon[-1]:
+                continue  # skip, there was a fail
+            converted_position = position_UD_to_serial(summon[0])
+            self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
+            self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
+
+
         for (position, info) in data["visible"].items():
             #print(position, info)
             infos = info.split(";")
@@ -251,7 +253,7 @@ class Carte:
 
                         self.batiments[posConvert[0]][posConvert[1]].pv = infos[2]
                         self.listeBatiments.append(self.batiments[posConvert[0]][posConvert[1]])
-                    
+              
 
 
     def convToDown(self, x, y):

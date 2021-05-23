@@ -50,11 +50,11 @@ class Player:
             "summon": final_summon,
         }
 
-    def ingenieurs(self,turn):
+    def ingenieurs(self, turn):
         """
         détermine le comportement et les sorties des ingénieurs
         """
-
+        caserne_construite = False
         for unite in self.game_map.listeUnites:
             # Check si inge
             if unite.identifiant == "V" and unite.appartenance == 1:
@@ -115,13 +115,21 @@ class Player:
                 # else se déplace vers target
 
                 # Si il n'a pas de role
+
                 if unite.role == 0:
                     print("Position: ",unite.position)
 
-                    # TODO PLUS TARD
-                    # si gold > 250 + x
-                    # Affecter a rôle 3
-                    # Donne les coordonnees de la target
+                    # Si on a assez de gold, on crée une caserne pour former des PPA
+                    if self.game_map.balance > 350 and self.game_map.nombreCasernes() == 0 and not caserne_construite:
+                        #Ordre de construction de la caserne a cote du larbin
+                        voisins = self.game_map.adjacent(*unite.position)
+                        for v in voisins:
+                            if self.game_map.estConstructible(*v):
+                                turn.build(unite.position, v, "C")
+                                caserne_construite = True
+                                break
+
+
 
                     # Trouve la ressource libre la plus proche
                     posLibreRessource = src.util.closestAvailableRessource(
@@ -166,10 +174,9 @@ class Player:
                     and self.game_map.batiments[i][j].appartenance == 1
                 ):
                     voisins = self.game_map.adjacent(i, j)
-                    # print(voisins)
                     for v in voisins:
-                        if v != None:
-                            if self.game_map.unites[v[0]][v[1]] == None and (
+                        if v:
+                            if not self.game_map.unites[v[0]][v[1]] and (
                                 self.game_map.terrain[v[0]][v[1]] == "F"
                                 or self.game_map.terrain[v[0]][v[1]] == "M"
                             ):  # Case vide

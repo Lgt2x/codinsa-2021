@@ -7,6 +7,7 @@ import src.turn
 seuilPPA = 80
 seuilTank = 1000
 
+
 class Player:
 
     def __init__(self, game_map):
@@ -26,6 +27,7 @@ class Player:
         self.ingenieurs(turn)
 
         # On joue avec les PPA
+        self.PPA(turn)
 
         # On calcule les summons
         self.compute_all_summonings(turn)
@@ -45,7 +47,6 @@ class Player:
         #             if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
         #                 turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
-
 
     def ingenieurs(self, turn):
         """
@@ -171,59 +172,63 @@ class Player:
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
 
-    def PPA(self, turn, move, attack):
+    def PPA(self, turn):
 
         for unite in self.game_map.listeUnites:
             # Check si PPA/Tank
             if unite.identifiant == "L" or unite.identifiant == "H":
+                print("PPPPPAAAAAA")
                 attaque = src.util.attaquerAdj(unite, self.game_map)
-                if attaque:
+                if attaque and len(attaque) != 0:
+                    print("A")
+                    print(unite.position, attaque)
                     turn.attaquer_position(unite.position, attaque)
                 else:
+                    print("B")
                     # Se déplace vers le spawn ennemi
                     ennemy = src.util.ennemyFinder(unite.position, self.game_map)
-                    if ennemy:
+                    print("Ennemy: ", ennemy, unite.position)
+                    if ennemy is not None:
+                        print("C")
+                        adjEnn = src.util.closestPath(unite,self.game_map,ennemy[0],ennemy[1])
                         moves = src.util.nextPositions(
-                            (unite.position[0], unite.position[1]),
+                            unite.position,
                             self.game_map,
-                            ennemy
+                            adjEnn
                             , unite.pointMouvement
                         )
-                    if len(moves) > 0:
-                        turn.deplacer_unite(unite.position, moves)
+                        print("=" * 50, "\n", moves)
+                        if len(moves) > 0:
+                            turn.deplacer_unite(unite.position, moves)
 
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
 
-    def compute_all_summonings(self,turn):
+    def compute_all_summonings(self, turn):
         nbInge = self.game_map.nbIngenieurs()
-        #Spawn inge
-        if nbInge < self.game_map.ressources*3:
+        # Spawn inge
+        if nbInge < self.game_map.ressources * 3:
             for b in self.game_map.listeBatiments:
-                #Notre spawn:
-                if b.identifiant=='S' and b.appartenance == 1:
+                # Notre spawn:
+                if b.identifiant == 'S' and b.appartenance == 1:
                     voisins = self.game_map.adjacent(*b.position)
                     for v in voisins:
-                        if nbInge < 3*self.game_map.ressources:
-                            turn.summon(v,"V")
-                            nbInge+=1
+                        if nbInge < 3 * self.game_map.ressources:
+                            turn.summon(v, "V")
+                            nbInge += 1
 
-
-        #Spawn PPA
+        # Spawn PPA
 
         money = self.game_map.balance
         for b in self.game_map.listeBatiments:
             if b.identifiant == 'C' and b.appartenance == 1:
                 voisins = self.game_map.adjacent(*b.position)
                 for v in voisins:
-                    if(money > seuilPPA and money <= seuilTank):
-                        turn.summon(v,"L")
-                        money-=30
-                    elif(money > seuilTank):
-                        money-=100
-
-
-
+                    if (money > seuilPPA and money <= seuilTank):
+                        turn.summon(v, "L")
+                        money -= 30
+                    elif (money > seuilTank):
+                        money -= 100
 
     def update(self, data):
         self.game_map.update(data)

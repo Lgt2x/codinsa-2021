@@ -6,6 +6,7 @@ class Player:
         self.game_map = game_map
     
     def play(self):
+
         print("Commence notre tour")
 
         self.move = {}
@@ -23,6 +24,7 @@ class Player:
         self.compute_all_summonings()
 
         # Conversions des summons dans le format de sortie
+
         final_summon = {}
         for location, unit in self.summon.items():
             key = str(list(self.game_map.convToDown(*location))).lower()

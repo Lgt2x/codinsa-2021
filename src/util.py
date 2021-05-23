@@ -150,7 +150,8 @@ def ennemyFinder(depart, carte):
                     pred[adj[0]][adj[1]] = current[1]
                     pQ.put((dist[adj[0]][adj[1]], adj))
 
-    return None
+    print(carte.spawnEnnemi , "="*20)
+    return carte.spawnEnnemi
 
 def closestAvailableRessource(unite, carte):
     posActuel = unite.position

@@ -26,6 +26,7 @@ class Player:
         self.ingenieurs(turn)
 
         # On joue avec les PPA
+        self.PPA(turn)
 
         # On calcule les summons
         self.compute_all_summonings(turn)
@@ -171,26 +172,34 @@ class Player:
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés
 
-    def PPA(self, turn, move, attack):
+    def PPA(self, turn):
 
         for unite in self.game_map.listeUnites:
             # Check si PPA/Tank
             if unite.identifiant == "L" or unite.identifiant == "H":
+                print("PPPPPAAAAAA")
                 attaque = src.util.attaquerAdj(unite, self.game_map)
-                if attaque:
+                if attaque and len(attaque) != 0:
+                    print("A")
+                    print(unite.position,attaque)
                     turn.attaquer_position(unite.position, attaque)
                 else:
+                    print("B")
                     # Se déplace vers le spawn ennemi
                     ennemy = src.util.ennemyFinder(unite.position, self.game_map)
-                    if ennemy:
+                    if ennemy is not None:
+                        print("C")
                         moves = src.util.nextPositions(
                             (unite.position[0], unite.position[1]),
                             self.game_map,
                             ennemy
                             , unite.pointMouvement
                         )
-                    if len(moves) > 0:
-                        turn.deplacer_unite(unite.position, moves)
+                        print("="*50,"\n", moves)
+                        if len(moves) > 0:
+                            turn.deplacer_unite(unite.position, moves)
+
+
 
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés

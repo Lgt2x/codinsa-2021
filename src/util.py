@@ -2,10 +2,10 @@ import math
 from queue import PriorityQueue
 
 
-def nextPositions(depart, carte, arrivee, unite):
+def nextPositions(depart, carte, arrivee, nbDeplacement):
     x, y = carte.x, carte.y
 
-    if depart==arrivee:
+    if depart == arrivee:
         return []
 
     visited = [[False for _ in range(y)] for _ in range(x)]
@@ -56,8 +56,9 @@ def nextPositions(depart, carte, arrivee, unite):
                     dist[adj[0]][adj[1]] = dist[current[1][0]][current[1][1]] + cout
                     pred[adj[0]][adj[1]] = current[1]
                     pQ.put((dist[adj[0]][adj[1]], adj))
-
-    rep =[]
+    rep = []
+    if dist[arrivee[0]][arrivee[1]] == -1:
+        return rep
     rep.append(arrivee)
     # print("dist: ", dist)
     # print("Pred: ", pred)
@@ -66,26 +67,47 @@ def nextPositions(depart, carte, arrivee, unite):
     while list(pred[rep[-1][0]][rep[-1][1]]) != list(depart):
         rep.append(pred[rep[-1][0]][rep[-1][1]])
     # print(rep)
-    return [rep.pop(-1) for _ in range(min(len(rep),unite.pointMouvement))]
+    return [rep.pop(-1) for _ in range(min(len(rep), nbDeplacement))]
+
 
 def closestAvailableRessource(unite, carte):
     posActuel = unite.position
 
     dest = posActuel
-    minDist=math.inf
+    minDist = math.inf
 
     for x in range(carte.x):
         for y in range(carte.y):
-            if carte.terrain[x][y]== 'R':
-                print("Ressource trouve: ",x,y)
+            if carte.terrain[x][y] == 'R':
+                # print("Ressource trouve: ", x, y)
 
-                for adj in carte.adjacent(x,y):
-                    print("adj: ",adj)
-                    if carte.terrain[adj[0]][adj[1]]=='F' or carte.terrain[adj[0]][adj[1]]=='F':
-                        if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None:
-                            dist = carte.distance(adj[0],adj[1],posActuel[0],posActuel[1])
-                            if dist<minDist:
-                                minDist=dist
-                                dest=adj
+                for adj in carte.adjacent(x, y):
+                    # print("adj: ", adj)
+                    if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
+                        if carte.batiments[adj[0]][adj[1]] is None and carte.unites[adj[0]][adj[1]] is None and not carte.target[adj[0]][adj[1]]:
+                            dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
+                            if dist < minDist:
+                                minDist = dist
+                                dest = adj
     return dest
 
+
+def closestPath(unite, carte, x, y, compteurRec=0):
+    posActuel = unite.position
+    if compteurRec>10:
+        return unite.position
+    dest = posActuel
+    minDist = math.inf
+
+    for adj in carte.adjacent(x, y):
+        # print("adj: ", adj)
+        if carte.terrain[adj[0]][adj[1]] == 'F' or carte.terrain[adj[0]][adj[1]] == 'M':
+            dist = carte.distance(adj[0], adj[1], posActuel[0], posActuel[1])
+            if dist < minDist:
+                minDist = dist
+                dest = adj
+
+    if carte.batiments[dest[0]][dest[1]] is not None or carte.unites[dest[0]][dest[1]] is not None or carte.target[dest[0]][dest[1]]:
+        print("Appel recursif")
+        dest = closestPath(unite, carte, dest[0], dest[1],compteurRec+1)
+    return dest

@@ -29,6 +29,8 @@ for turn_number in range(1001):
     
     # Recupere les données du tour
     data = connexion.getTurn()
+
+    # La partie est terminée
     if "your_turn" not in data:
         print("Fin de la partie")
         if data["AIsWinner"] == True:
@@ -49,5 +51,6 @@ for turn_number in range(1001):
 
     if turn_number > 20:
         break
+
 connexion.deleteGames(connexion.game_id)
 logger.save_logs()

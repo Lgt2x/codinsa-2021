@@ -57,32 +57,49 @@ class Connection:
         self.socket.connect(('193.52.94.158', self.port))
 
     def getMap(self):
+        """
+        Reçoit le premier tour, avec la map
+        """
         data = self.socket.recv(2048)
         data = data.decode()
         print(data)
 
-        if data[-2] != "}":
+        while data[-2] != "}":
             data2 = self.socket.recv(2048)
             data2 = data2.decode()
             print(data2)
-
-            return json.loads(data + data2)
+            data += data2
 
         return json.loads(data)
 
     def sendTurn(self, data):
+        """
+        Envoie le tour passé en argument au serveur
+        """
+
         data['token'] = self.password
         print(str(data).replace("'", '"'))
         d = str(data).replace("'", '"') + "\n"
         self.socket.send(d.encode())
-        print("Sent turn")
+
+        print("Tour envoyé")
+        print(data)
 
     def getTurn(self):
-        data = self.socket.recv(2048).decode()
+        """
+        Reçoit le tour envoyé au serveur, et le renvoie
+        """
+
+        data = self.socket.recv(1024).decode()
+
+        while data[-2] != "}":
+            data2 = self.socket.recv(1024)
+            data2 = data2.decode()
+            data += data2
+
         print("Tour reçu")
         print(data)
         parsed = json.loads(data)
-
 
         if "errors" in parsed:
             print(parsed["errors"])

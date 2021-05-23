@@ -10,6 +10,11 @@ class Terrain(Enum):
     A = 2
     R = 3
 
+class Point:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
 
 dict_classes_batiment = {
     "S": batiment.Ecole,

@@ -16,21 +16,26 @@ class Turn():
         return position_serial_to_UD(pos)
     def cdump(self,pos):
         return json.dumps(conv(pos))
-
+    def f_pos(self,pos):
+        return str(list(pos))
+    def l_conv(self, pos):
+        return list(self.conv(pos))
+    def f_conv(self,pos):
+        return str(list(self.conv(pos)))
     def mine(self,pos_inge, pos_ressource):
-        self.d_mine[self.conv(pos_inge)] = [self.conv[pos_ressource]] # check double array
+        self.d_mine[self.conv(pos_inge)] = [self.l_conv[pos_ressource]] # check double array
 
     def summon(self,pos_summon, type_summon):
         self.d_summon[self.conv(pos_summon)] = type_summon # OK 
 
     def deplacer_unite(self,position_depart, liste_pos):
-        self.d_move[self.conv(position_depart)] = [self.conv(x) for x in liste_pos]
+        self.d_move[self.conv(position_depart)] = [self.l_conv(x) for x in liste_pos]
     
     def attaquer_position(self,position_depart, position_arrivee):
-        self.d_attack[self.conv(position_depart)] = self.conv(position_arrivee) # check double array
+        self.d_attack[self.conv(position_depart)] = self.l_conv(position_arrivee) # check double array
     
     def build(self,pos_inge, pos_build, type_build):
-        self.d_build[self.conv(pos_inge)] = [self.conv(pos_build), type_build]
+        self.d_build[self.conv(pos_inge)] = [self.l_conv(pos_build), type_build]
     
     def get_json_turn(self):
         full_dict = {}

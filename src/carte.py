@@ -131,7 +131,7 @@ class Carte:
         
     
     def estVide(self,x,y):
-        return (self.batiments[x][y] == None and self.unite[x][y] == None)
+        return (self.batiments[x][y] == None and self.unites[x][y] == None)
 
     #True si le terrain est F ou M et qu'il n'y a pas d'unité ou construction dessus
     def estConstructible(self,x,y):
@@ -183,7 +183,8 @@ class Carte:
         for built in data["built"]:
             if(built[-1]): #Ajout réussi
                 posConstruction = position_UD_to_serial(built[1])
-                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[summon[2]](appartenance=1, position=posConstruction)
+
+                self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[built[2]](appartenance=1, position=posConstruction)
                 self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
                 
         #Killed : nécessaire uniquement pour les bâtiments !

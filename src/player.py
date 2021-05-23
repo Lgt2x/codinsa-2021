@@ -33,6 +33,12 @@ class Player:
             final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
             turn.summon(location, unit)
 
+        for unite in self.game_map.listeUnites:
+            if unite.appartenance:
+                voisins_unite = self.game_map.adjacent(*unite.position)
+                for voisin_unite in voisins_unite:
+                    if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
+                        turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
         return {
             "move": self.move,

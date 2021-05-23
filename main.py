@@ -50,7 +50,7 @@ for turn_number in range(1001):
     turn_instance = Turn()
     played = player.play(turn_instance)
     connexion.sendTurn(turn_instance.get_json_turn())
-    logger.log_gamestate(player.game_map)
+    logger.log_gamestate(player)
 
     if turn_number > 10:
         break

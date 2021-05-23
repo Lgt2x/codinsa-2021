@@ -128,11 +128,16 @@ class Carte:
 
     def convToDown(self, x, y):
         return x // 2, y, bool(x % 2)
+        
+    
+    def estVide(self,x,y):
+        return (self.batiments[x][y] == None and self.unite[x][y] == None)
 
     #True si le terrain est F ou M et qu'il n'y a pas d'unité ou construction dessus
     def estConstructible(self,x,y):
         typeTerrain = self.terrain[x][y]
-        return (((typeTerrain == "M") or (typeTerrain == "F")) and self.batiments[x][y] == None and self.unite[x][y] == None)
+        return (((typeTerrain == "M") or (typeTerrain == "F")) and self.estVide(x,y))
+
 
     def update(self, data):
 
@@ -149,7 +154,6 @@ class Carte:
                 
         self.listeUnites = newListeUnites
 
-
         # update summoned
         for summon in data["summoned"]:
             if not summon[-1]:
@@ -157,7 +161,6 @@ class Carte:
             converted_position = position_UD_to_serial(summon[0])
             self.unites[converted_position[0]][converted_position[1]] = dict_classes_unites[summon[1]](appartenance=1, position=converted_position)
             self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
-
 
         for moved in data["moved"]:
             
@@ -196,6 +199,12 @@ class Carte:
                 else:
                     self.listeUnites.remove(self.unites[posKilled[0]][posKilled[1]])
                     self.unites[posKilled[0]][posKilled[1]] = None
+            else:
+                if(self.batiments[posKilled[0]][posKilled[1]] == None):
+                    print("Erreur, on nous dit qu'on a kill une case vide")
+                else:
+                    self.listeBatiments.remove(self.batiments[posKilled[0]][posKilled[1]])
+                    self.batiments[posKilled[0]][posKilled[1]] = None
 
         for (position, info) in data["visible"].items():
             #print(position, info)

@@ -1,7 +1,7 @@
 class Unite:
     def __init__(self, appartenance, position):
-        self.appartenance = 0
-        self.position = 0
+        self.appartenance = appartenance
+        self.position = position
 
 
 class Ingenieur(Unite):

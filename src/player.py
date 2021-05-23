@@ -181,6 +181,58 @@ class Player:
     def update(self, data):
         self.game_map.update(data)
 
-    def play_defense(self):
-        # get a perimeter around spawn
-        pass
+    def play_defense(self, turn):
+        def dToSpawn(position):
+            return self.game_map.distance(position[0], self.game_map.spawn[0], position[1], self.game_map.spawn[1])
+        # get opponent units in perimeter:
+        PERIMETER_DANGER = 5
+        optimum_amphi = 2
+        opponents_perimeter = [x for x in self.game_map.listeUnites if x.appartenance==0 and dToSpawn(x.position) <= PERIMETER_DANGER]
+        unites_perimeter = [x for x in self.game_map.listeUnites if x.appartenance==1 and dToSpawn(x.position) <= PERIMETER_DANGER]
+        
+        batiments_perimeter = [x for x in self.game_map.listeBatiments if x.appartenance==1 and dToSpawn(x.position) <= PERIMETER_DANGER]
+        if(len(opponents_perimeter)) == 0: # no enemy nearby
+            camps = [x for x in batiments_perimeter if x.identifiant == "C"]
+            tours = [x for x in batiments_perimeter if x.identifiant == "T"]
+            if len(camps) < optimum_amphi:
+                # build camp
+                pass
+            else:
+                
+                # build tower
+                pass
+        else:
+            # si rapport de force déséquilibré, former des unités
+            MAX_FORMATION = 4
+            if 3*sum([x.pv for x in opponents_perimeter])>= sum([x.pv for x in unites_perimeter]):
+                # lister les positions de formations
+                all_pos_formations = []
+                for camp in camps:
+                    positions_formations = self.game_map.adjacent(*camp.position)
+                    all_pos_formations.extend(positions_formations)
+                
+                # Lister les positions constructibles, construire unité sur la plus proche du danger la plus proche
+                distances_positions_unites = [[x.position, dToSpawn(x.position)] for x in opponents_perimeter]
+                all_pos_formations = list(set([x for x in all_pos_formations if self.game_map.estConstructible(*x)]))
+                distances_positions_unites = sorted(distances_positions_unites, key = lambda x: x[1])
+                cpt_forme = 0
+                while(cpt_forme < MAX_FORMATION and all_pos_formations):
+                    close_enemy = distances_positions_unites[0][0]
+                    # former sur la position la plus proche d un ennemi
+                    all_pos_formations = sorted(all_pos_formations, key = lambda x: self.game_map.distance(x[0], close_enemy[0], x[1], close_enemy[1]))
+                    # tout en restant aussi proche que possible du spawn
+                    all_pos_formations = sorted(all_pos_formations, key = lambda x: dToSpawn(x))
+
+                    turn.spawn(all_pos_formations[0], "L")
+                    cpt_forme +=1
+                    all_pos_formations = all_pos_formations[1:]
+                    distances_positions_unites[0][1] += 1 # faire comme si il s eloignait pour voir les autres menaces
+
+            # target unit, starting by the closest one to spawn
+            # for each of my units, if I can already target someone, do it
+            for my_unit in unites_perimeter:
+                for opp_unit in opponents_perimeter:
+                    if self.game_map.distance(my_unit.position[0], opp_unit.position[0], my_unit.position[1], opp_unit.position[1]) == 1:
+                        turn.attaquer_position(my_unit.position, opp_unit.position)
+                # in case of equality : d'abord si on peut achever quelqu'un, ensuite au plus proche
+            # sinon, se rapprocher de la base 

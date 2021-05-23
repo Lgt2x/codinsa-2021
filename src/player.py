@@ -1,3 +1,4 @@
+import json
 class Player:
     def __init__(self, game_map):
         self.game_map = game_map
@@ -12,7 +13,8 @@ class Player:
         self.compute_all_summonings(summon)
         final_summon = {}
         for location, unit in summon.items():
-            final_summon[self.game_map.convToDown(*location)] = unit
+            key = str(list(self.game_map.convToDown(*location))).lower()
+            final_summon[json.dumps(self.game_map.convToDown(*location))] = unit
         return {"move":move,"attack":attack,"mine":mine,"build":build,"summon":final_summon}
 
     def ingenieurs(self,move,attack,mine,build):
@@ -26,15 +28,13 @@ class Player:
             for j in range(len(self.game_map.batiments[0])):
                 if self.game_map.batiments[i][j] == None:
                     continue
-                print("batiment is not none")
                 if self.game_map.batiments[i][j].identifiant == 'S' and self.game_map.batiments[i][j].appartenance == 1:
                     voisins = self.game_map.adjacent(i,j)
-                    print(voisins)   
+                    # print(voisins)   
                     for v in voisins:
                         if(v!=None):
                             if(self.game_map.unites[v[0]][v[1]] == None and (self.game_map.terrain[v[0]][v[1]] == "F" or self.game_map.terrain[v[0]][v[1]] == "M")): #Case vide
                                 dict_summons[tuple(v)] = "V"
-                                print("one unit spawned")
                                 break
                     
                 if self.game_map.batiments[i][j].identifiant == 'C' and self.game_map.batiments[i][j].appartenance == 1:

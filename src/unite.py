@@ -2,8 +2,8 @@ class Unite:
     def __init__(self, appartenance, position):
         super().__init__()
         #TODO: modifier une fois le format de data definie
-        self.appartenance = 0
-        self.position = 0
+        self.appartenance = appartenance
+        self.position = position
     
 
 

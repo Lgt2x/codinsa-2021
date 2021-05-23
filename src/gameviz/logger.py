@@ -30,10 +30,10 @@ class GameLogger():
     def log_gamestate(self, carte : Carte): 
         len_x = len(carte.terrain)
         len_y = len(carte.terrain[0])
-        map_representation = [[{} for _ in range(len_y)] for _ in range(len_x)]       
+        map_representation = [[{} for _ in range(len_x)] for _ in range(len_y)]       
         for x in range(len_x):
             for y in range(len_y):
-                map_representation[x][y] = TileState(carte.terrain[x][y], carte.batiments[x][y], carte.unites[x][y]).to_dict()
+                map_representation[y][x] = TileState(carte.terrain[x][y], carte.batiments[x][y], carte.unites[x][y]).to_dict()
         self.all_states.append({"map_representation" : map_representation})
     
     def save_logs(self):

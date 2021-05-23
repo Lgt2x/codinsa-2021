@@ -19,14 +19,20 @@ dirpath = f"game_viz/{target_dir}"
 if os.path.exists(dirpath) and os.path.isdir(dirpath):
     shutil.rmtree(dirpath)
 os.makedirs(dirpath)
+border_lgd = 200
 for index, state in tqdm(enumerate(data), total = len(data)):
     game_map = state["map_representation"]
-
-    im = Image.new(mode = 'RGB', size = (size_img,size_img))
+    
+    im = Image.new(mode = 'RGB', size = (size_img+border_lgd,size_img))
     draw = ImageDraw.Draw(im)
-    draw.polygon([(0,0), (0, size_img), (size_img,size_img), (size_img, 0)], fill = 'white')
+    draw.polygon([(0,0), (0, size_img), (size_img+border_lgd,size_img), (size_img+border_lgd, 0)], fill = 'white')
     plot_tools.draw_map(draw, size_img, game_map, current_moderange)
+
+    font_lgd = ImageFont.truetype("src/gameviz/fonts/arial.ttf", size=30)
+    draw.text((size_img, size_img//10), text=f"Balance : {state['balance']}", font = font_lgd, fill="black")
     im.save(f'game_viz/{target_dir}/{index:04d}.png')
+
+
 
 
     

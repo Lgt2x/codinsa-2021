@@ -1,6 +1,7 @@
 import sys
 sys.path.append("..")
 from src.carte import Carte
+from src.player import Player
 import json
 class TileState():
     def __init__(self, map_shard, batiment_shard, units_shard):
@@ -27,14 +28,15 @@ class GameLogger():
     def __init__(self, target_file_location):
         self.all_states = []
         self.target_file_location = target_file_location
-    def log_gamestate(self, carte : Carte): 
+    def log_gamestate(self, player : Player): 
+        carte = player.game_map
         len_x = len(carte.terrain)
         len_y = len(carte.terrain[0])
         map_representation = [[{} for _ in range(len_x)] for _ in range(len_y)]       
         for x in range(len_x):
             for y in range(len_y):
                 map_representation[y][x] = TileState(carte.terrain[x][y], carte.batiments[x][y], carte.unites[x][y]).to_dict()
-        self.all_states.append({"map_representation" : map_representation})
+        self.all_states.append({"map_representation" : map_representation, "balance" : player.game_map.balance})
     
     def save_logs(self):
         with open(self.target_file_location, 'w') as outfile : 

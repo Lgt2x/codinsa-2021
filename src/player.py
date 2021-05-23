@@ -4,8 +4,11 @@ import json
 
 import src.turn
 
+seuilPPA = 80
+seuilTank = 1000
 
 class Player:
+
     def __init__(self, game_map):
         self.game_map = game_map
 
@@ -42,7 +45,7 @@ class Player:
         #             if self.game_map.estConstructible(*voisin_unite) and self.game_map.estVide(*voisin_unite):
         #                 turn.build(unite.position, voisin_unite, "C")
         # On renvoie à l'IO les bonnes infos
-        
+
 
     def ingenieurs(self, turn):
         """
@@ -193,11 +196,19 @@ class Player:
 
 
         #Spawn PPA
+
+        money = self.game_map.balance
         for b in self.game_map.listeBatiments:
             if b.identifiant == 'C' and b.appartenance == 1:
                 voisins = self.game_map.adjacent(*b.position)
                 for v in voisins:
-                    turn.summon(v,"L")
+                    if(money > seuilPPA and money <= seuilTank):
+                        turn.summon(v,"L")
+                        money-=30
+                    elif(money > seuilTank):
+                        money-=100
+
+
 
 
     def update(self, data):
@@ -228,7 +239,7 @@ class Player:
                             unite.target = None
                 self.ingenieurs()
             else:
-                
+
                 # build tower
                 pass
         else:
@@ -240,7 +251,7 @@ class Player:
                 for camp in camps:
                     positions_formations = self.game_map.adjacent(*camp.position)
                     all_pos_formations.extend(positions_formations)
-                
+
                 # Lister les positions constructibles, construire unité sur la plus proche du danger la plus proche
                 distances_positions_unites = [[x.position, dToSpawn(x.position)] for x in opponents_perimeter]
                 all_pos_formations = list(set([x for x in all_pos_formations if self.game_map.estConstructible(*x)]))
@@ -273,7 +284,7 @@ class Player:
                 opp_targets = sorted(opp_targets, key = lambda x: self.game_map.distance(x.position[0], my_unit.position[0], x.position[1], my_unit.position[1]))
                 target_case = closestPath(my_unit, self.game_map, opp_targets[0].position[0], opp_targets.position[1])
                 moves = nextPositions(my_unit.position, self.game_map, target_case, my_unit.pointMouvement)
-                
+
                 if len(moves) != 0 and tuple(moves[-1]) not in [tuple(x) for x in positions_futur_taken]:
                     turn.move(my_unit.position, moves)
                     positions_futur_taken.append(moves[-1])

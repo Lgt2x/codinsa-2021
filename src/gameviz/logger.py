@@ -25,9 +25,9 @@ class TileState():
         }
     
 class GameLogger():
-    def __init__(self, target_file_location):
+    def __init__(self, target_file_location, account):
         self.all_states = []
-        self.target_file_location = target_file_location
+        self.target_file_location = target_file_location + "_" + str(account)
     def log_gamestate(self, player : Player): 
         carte = player.game_map
         len_x = len(carte.terrain)

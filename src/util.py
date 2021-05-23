@@ -91,7 +91,7 @@ def nextPositions(depart, carte, arrivee, nbDeplacement):
 def closestAvailableRessource(unite, carte):
     posActuel = unite.position
 
-    dest = posActuel
+    dest = None
     minDist = math.inf
 
     for x in range(carte.x):
@@ -134,19 +134,19 @@ def closestPath(unite, carte, x, y, compteurRec=0):
 
 
 def miner(unite, game_map):
-    print("A")
+
     if unite.identifiant == 'V':
-        print("B")
+
         # on check si les cases adjacentes a l'inge sont des ressources
         voisins = game_map.adjacent(unite.position[0], unite.position[1])
         for v in voisins:
-            print("C")
+
             if game_map.terrain[v[0]][v[1]] == "R":
-                print("D")
+
                 # On retourne la pos de la ressource
                 return v
     # si pas de ressources ou mauvaise unite
-    print("E")
+
     return []
 
 

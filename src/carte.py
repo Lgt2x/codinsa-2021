@@ -271,7 +271,7 @@ class Carte:
         self.unites[x][y][down] = val
 
     def get_all_pos_inside_perimeter(self, pos_center, perimeter):
-        tiles_inside_perimeter = (])
+        tiles_inside_perimeter = ()
         for i in range(len(self.terrain)):
             for j in range(len(self.terrain[0])):
                 if self.distance(i, pos_center[0], j, pos_center[1]) <= perimeter:

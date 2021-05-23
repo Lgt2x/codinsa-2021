@@ -62,7 +62,7 @@ class Player:
                 # Si le déplacement est fini
                 if unite.role == 1 and unite.position[0] == unite.target[0] and unite.position[1] == unite.target[1]:
                     # On l'assigne au minage
-                    print("MINER")
+
                     unite.role = 2
                     self.game_map.target[unite.target[0]][unite.target[1]] = False
                     unite.target = None
@@ -72,10 +72,9 @@ class Player:
                 if unite.role == 2:
                     # On mine
                     posRessource = src.util.miner(unite, self.game_map)
-                    print("POS RESSOURCE: ",posRessource)
-                    print("POS UNITE: ", unite.position)
+
                     if len(posRessource)>0:
-                        print("F")
+
                         turn.mine(unite.position,posRessource)
                     # else:
                         # unite.role=0
@@ -127,28 +126,59 @@ class Player:
                     posLibreRessource = src.util.closestAvailableRessource(
                         unite, self.game_map
                     )
-                    print("PositionLibreRessource: ", posLibreRessource)
-                    unite.target = posLibreRessource
-                    # on save que cette position est prise
-                    self.game_map.target[posLibreRessource[0]][
-                        posLibreRessource[1]
-                    ] = True
-                    # on deplace
-                    deplacementUnite = src.util.nextPositions(
-                        unite.position,
-                        self.game_map,
-                        unite.target,
-                        unite.pointMouvement,
-                    )
-                    if len(deplacementUnite)>0:
-                        turn.deplacer_unite(unite.position,deplacementUnite)
-                    else:
-                        self.game_map.target[unite.target[0]][unite.target[1]] = False
 
-                    # on passe au role "se deplacer vers ress"
-                    unite.role = 1
+                    mineur = False
+                    if posLibreRessource is not None:
 
-                    # affecter a role 1 et trouver la ressource libre la plus proche
+
+
+                        # on deplace
+                        deplacementUnite = src.util.nextPositions(
+                            unite.position,
+                            self.game_map,
+                            posLibreRessource,
+                            unite.pointMouvement,
+                        )
+                        if len(deplacementUnite)>0:
+                            unite.target = posLibreRessource
+                            turn.deplacer_unite(unite.position,deplacementUnite)
+                            # on save que cette position est prise
+                            self.game_map.target[posLibreRessource[0]][
+                                posLibreRessource[1]
+                            ] = True
+                            unite.role = 1
+                            mineur = True
+                        else:
+
+                            for uniteMineur in self.game_map.listeUnites:
+                                # Check si inge
+                                if uniteMineur.identifiant == "V" and uniteMineur.appartenance == 1 and uniteMineur.role==2:
+                                    deplacementUnite = src.util.nextPositions(
+                                        uniteMineur.position,
+                                        self.game_map,
+                                        posLibreRessource,
+                                        uniteMineur.pointMouvement,
+                                    )
+                                    if len(deplacementUnite) > 0:
+                                        turn.deplacer_unite(uniteMineur.position, deplacementUnite)
+                                        uniteMineur.role = 1
+                                        uniteMineur.target=posLibreRessource
+                                        self.game_map.target[uniteMineur.target[0]][uniteMineur.target[1]] = False
+                                        self.game_map.target[posLibreRessource[0]][
+                                            posLibreRessource[1]
+                                        ] = True
+                                    else:continue
+                    # if not mineur:
+
+
+
+
+
+
+                        # on passe au role "se deplacer vers ress"
+
+
+                        # affecter a role 1 et trouver la ressource libre la plus proche
 
         # Summon le max d'ingés (autour du spawn)
         # Mise à jour de la liste d'ingés

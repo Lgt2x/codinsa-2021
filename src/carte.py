@@ -163,8 +163,6 @@ class Carte:
             self.listeUnites.append(self.unites[converted_position[0]][converted_position[1]])
 
         for moved in data["moved"]:
-            
-            converted_position 
 
             #Le déplacement a eu lieu
             if(moved[1]):
@@ -176,7 +174,11 @@ class Carte:
                 self.unites[posArrivee[0]][posArrivee[1]].position = posArrivee
                 self.unites[posDepart[0]][posDepart[1]] = None
 
-        #Attacked : pas besoin les hp sont actualisés
+        #Attacked : Besoin pour les batiments
+        for attacked in data["attacked"]:
+            if(attacked[1]): #Détruit
+                pass
+        
 
         #Built : Nécessaire car les batiments reçus seront à nous
         #Format : coords du builder, coords du build, type, succes
@@ -186,9 +188,7 @@ class Carte:
                 self.batiments[posConstruction[0]][posConstruction[1]] = dict_classes_batiment[summon[2]](appartenance=1, position=posConstruction)
                 self.listeBatiments.append(self.batiments[posConstruction[0]][posConstruction[1]])
                 
-        #Killed : nécessaire uniquement pour les bâtiments !
-
-
+        #Killed 
         #Format : position, type (à vérifier)
         for killed in data["killed"]:
             posKilled = position_UD_to_serial(killed[0])
